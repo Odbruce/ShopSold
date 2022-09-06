@@ -8,7 +8,7 @@ export const Next = ({next,direction}) => {
 
 
            return<Wrapper initial={{opacity:0,y:20}}
-           animate={{opacity:direction==="leave"?0:(direction==="next"?1:0),y:direction==="leave"?20:(direction==="next"?0:20)}}>                 
+                   animate={{opacity:direction==="leave"?0:(direction==="next"?1:0),y:direction==="leave"?20:(direction==="next"?0:20)}}>                 
                 <div  className={"next"}>
                   <div className="prop_name">
                     <h2>{name} </h2>
