@@ -1,5 +1,5 @@
 const Airtable = require('airtable-node');
-
+require("dotenv").config()
 
 
 
@@ -7,7 +7,7 @@ exports.handler = async (event,context)=>{
     
     let tables = event.queryStringParameters.cate==="\"men\""?"men":"projects";
     
-    const airtable = new Airtable({ apiKey: 'keyKUFCcdmSQlTa4D' })
+    const airtable = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
       .base('appcraBS6DJKAua0l')
       .table(tables)
 
