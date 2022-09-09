@@ -125,6 +125,7 @@ const Wrapper = styled.div`
         object-fit: cover;
         object-position: 0% 20%;
         width: 60px;
+        border-bottom: solid 2px transparent;
         background: #c2ccbe;
       }
 

@@ -3,10 +3,26 @@ import { Link, useMatch } from "react-router-dom";
 import { useState, useEffect } from "react";
 const Nav = ({ cate }) => {
   const [prop, setProp] = useState(true);
+
+  const [imgIndex, setimgIndex] = useState(1);
   const match = useMatch("/shop/women");
   useEffect(() => {
     match && setProp(true);
   }, []);
+
+  useEffect(() => {
+    const add = setInterval(() => {
+      if (imgIndex === 3) {
+        return setimgIndex("1");
+      }
+      return setimgIndex(JSON.stringify(imgIndex++));
+    }, 1000);
+
+    return () => {
+      clearInterval(add);
+    };
+  }, [imgIndex]);
+
   const main = {
     animate: {
       top: 0,
@@ -71,6 +87,9 @@ const Nav = ({ cate }) => {
           transition: { duration: 1 },
         }}
         className="nav_open"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./Utilities/cover_page2.jpg))`,
+        }}
       >
         <motion.div
           variants={signIn}

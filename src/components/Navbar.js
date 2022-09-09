@@ -1,9 +1,11 @@
 import { Link, useMatch, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { RiShoppingBag3Fill } from "react-icons/ri";
 import { BsBookmarkHeart, BsSearch } from "react-icons/bs";
 import { GrClose } from "react-icons/gr";
+import { BsFacebook, BsInstagram, BsTwitter, BsSnapchat } from "react-icons/bs";
+
 import styled from "styled-components";
 
 const Navbar = () => {
@@ -15,6 +17,8 @@ const Navbar = () => {
   // console.log(matchshop.params["*"]);
 
   const [hide, setHide] = useState(true);
+  const [enter, setEnter] = useState({ btn1: true, btn2: false });
+  const [bar, setbar] = useState(false);
 
   const scrollLog = () => {
     console.log("ok...");
@@ -58,6 +62,91 @@ const Navbar = () => {
           </button>
         </div>
       </div>
+      <NavWrapper
+        initial={{ x: "-150%" }}
+        animate={{ x: bar ? 0 : "-150%" }}
+        transition={{
+          duration: 0.4,
+          type: "tween",
+          ease: [0.6, 0.15, 0.59, 0.9],
+        }}
+      >
+        <div className="header">
+          <button
+            onClick={() => {
+              return setEnter({ ...enter, btn1: true, btn2: false });
+            }}
+          >
+            women {enter.btn1 && <span></span>}
+          </button>
+
+          <button
+            onClick={() => {
+              return setEnter({ ...enter, btn2: !enter.btn2, btn1: false });
+            }}
+          >
+            men {enter.btn2 && <span></span>}
+          </button>
+        </div>
+        <ul className="ul_nav">
+          <li>
+            <Link className="link_nav" to="">
+              <p>Lorem, ipsum</p>
+              <img src="" alt="" />
+            </Link>
+          </li>
+          <li>
+            <Link className="link_nav" to="">
+              <p>Lorem, ipsum.</p>
+              <img src="" alt="" />
+            </Link>
+          </li>
+          <li>
+            <Link className="link_nav" to="">
+              <p>Lorem, ipsum.</p>
+              <img src="" alt="" />
+            </Link>
+          </li>
+          <li>
+            <Link className="link_nav" to="">
+              <p>Lorem, ipsum.</p>
+              <img src="" alt="" />
+            </Link>
+          </li>
+          <li>
+            <Link className="link_nav" to="">
+              <p>Lorem, ipsum.</p>
+              <img src="" alt="" />
+            </Link>
+          </li>
+          <li>
+            <Link className="link_nav" to="">
+              <p>Lorem, ipsum.</p>
+              <img src="" alt="" />
+            </Link>
+          </li>
+        </ul>
+        <ul className="footer">
+          <li>
+            <BsFacebook />
+          </li>
+          <li>
+            <BsInstagram />
+          </li>
+          <li>
+            <BsTwitter />
+          </li>
+          <li>
+            <BsSnapchat />
+          </li>
+        </ul>
+        <div
+          onClick={() => {
+            setbar(false);
+          }}
+          className={bar ? "nav_wrap blur_active" : "nav_wrap"}
+        ></div>
+      </NavWrapper>
       <Wrapper animate={{ opacity: !matchome ? 1 : 0 }} id="nav_id">
         {/* <motion.div
           initial={{ opacity: 0 }}
@@ -112,11 +201,17 @@ const Navbar = () => {
             </div>
           </div>
         </motion.div> */}
-        <div className="bars">
-          <div className="bar"></div>
-          <div className="bar"></div>
-          <div className="bar"></div>
+        <div
+          onClick={() => {
+            setbar(!bar);
+          }}
+          className="bars"
+        >
+          <div className={`${bar ? "bar_active" : ""}`}></div>
+          <div className={`${bar ? "bar_active" : ""}`}></div>
+          <div className={`${bar ? "bar_active" : ""}`}></div>
         </div>
+
         <div className="nav-buttons">
           <button>
             <Link className={cate === "men" ? "active" : "men"} to="/shop/men">
@@ -180,6 +275,118 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+const NavWrapper = styled(motion.nav)`
+  position: fixed;
+  top: 0;
+  width: 320px;
+  height: 100vh;
+  background: whitesmoke;
+  box-sizing: border-box;
+  z-index: 5;
+  transform: translateX(-150%);
+  transition: 0.2s ease-in-out transform;
+
+  @media (min-width: 780px) {
+    display: none;
+  }
+
+  .nav_wrap {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    // background: rgb(0, 0, 0, 0.2);
+    // background: rgb(219, 152, 54, 0.1);
+    transition: 0.2s ease all;
+    width: 0vw;
+  }
+
+  .blur_active {
+    backdrop-filter: blur(3px);
+    z-index: -1;
+    width: 100vw;
+  }
+
+  .header {
+    display: flex;
+    // justify-content: space-between;
+    gap: 0.2rem;
+    margin-bottom: 0.6rem;
+
+    button {
+      width: 100%;
+      height: 48px;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      // border-bottom: solid 1px transparent;
+      text-transform: uppercase;
+      transition: 0.4s ease all;
+
+      span {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        bottom: 0;
+        height: 2px;
+        background: #db9836;
+      }
+    }
+    .btn_active {
+      border-bottom: solid 2px #db9836;
+    }
+  }
+
+  .ul_nav {
+    display: grid;
+    box-sizing: border-box;
+    padding: 0.2rem 0.4rem;
+    height: calc(100vh - 130px);
+    overflow: auto;
+    scrollbar-width: none;
+    // gap: 1rem;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    li {
+      height: fit-content;
+
+      .link_nav {
+        display: flex;
+        background: grey;
+        background: #bbb8b0;
+        justify-content: space-between;
+        align-items: center;
+        padding-left: 0.4rem;
+        text-decoration: none;
+        color: whitesmoke;
+        img {
+          width: 80px;
+          height: 80px;
+          background: #94a48e;
+        }
+        p {
+          font-size: 12px;
+          width: 200px;
+        }
+      }
+    }
+  }
+  .footer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 0.4rem;
+    position: absolute;
+    height: 50px;
+    margin-bottom: 1rem;
+    bottom: 0;
+    width: 100%;
+    background: #94a48e;
+  }
+`;
 
 const Wrapper = styled(motion.section)`
   height: clamp(50px, 5vw, 72px);
@@ -267,13 +474,28 @@ const Wrapper = styled(motion.section)`
       width: 1.1rem;
       justify-content: space-around;
       flex-direction: column;
-      transition: all ease-in-out 0.6s;
+      transition: all ease-in-out 0.1;
 
       div {
         height: 0.104rem;
         width: 100%;
-        transition: all ease-in-out 0.6s;
+        transition: all ease-in-out 0.3s;
         background: #79b0b0;
+      }
+
+      .bar_active {
+        &:nth-of-type(1) {
+          transform: translateY(0.45rem) rotate(45deg);
+        }
+
+        &:nth-of-type(2) {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+
+        &:nth-of-type(3) {
+          transform: translateY(-0.45rem) rotate(-45deg);
+        }
       }
     }
   }

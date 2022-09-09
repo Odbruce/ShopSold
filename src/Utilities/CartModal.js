@@ -8,7 +8,7 @@ export const CartModal = () => {
     <Wrapper animate={{ x: false ? "0%" : "100%" }}>
       <div className="cart_head">
         <h1>your picks(3)</h1>
-        <GrClose />
+        <GrClose className="cart_close" />
       </div>
       <div className="cart_products">
         <div className="cart_product">
@@ -21,7 +21,7 @@ export const CartModal = () => {
               <p>Size : L</p>
               <p>Quatity : 1</p>
             </div>
-            <p>REMOVE</p>
+            <p className="cursor">REMOVE</p>
           </div>
           <div className="product_img">
             <img src="" alt="" />
@@ -37,7 +37,7 @@ export const CartModal = () => {
               <p>Size : L</p>
               <p>Quatity : 1</p>
             </div>
-            <p>REMOVE</p>
+            <p className="cursor">REMOVE</p>
           </div>
           <div className="product_img">
             <img src="" alt="" />
@@ -53,7 +53,7 @@ export const CartModal = () => {
               <p>Size : L</p>
               <p>Quatity : 1</p>
             </div>
-            <p>REMOVE</p>
+            <p className="cursor">REMOVE</p>
           </div>
           <div className="product_img">
             <img src="" alt="" />
@@ -69,7 +69,7 @@ export const CartModal = () => {
               <p>Size : L</p>
               <p>Quatity : 1</p>
             </div>
-            <p>REMOVE</p>
+            <p className="cursor">REMOVE</p>
           </div>
           <div className="product_img">
             <img src="" alt="" />
@@ -119,6 +119,10 @@ const Wrapper = styled(motion.div)`
       letter-spacing: 1px;
       font-size: 24px;
     }
+
+    .cart_close {
+      cursor: pointer;
+    }
   }
 
   .cart_products {
@@ -165,6 +169,11 @@ const Wrapper = styled(motion.div)`
           gap: 0.2vw;
           display: grid;
           letter-spacing: 1px;
+          }
+
+          .cursor {
+            cursor: pointer;
+          }
         }
       }
 
@@ -195,6 +204,7 @@ const Wrapper = styled(motion.div)`
       border: none;
       background: black;
       padding: 1vw 0;
+      cursor: pointer;
       justify-content: center;
       color: whitesmoke;
       align-items: center;
