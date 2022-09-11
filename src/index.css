@@ -83,7 +83,9 @@ code {
 .product-heading{
   height:clamp(72px,8.33vw,119px);
   /* margin-bottom:1em; */
-  background:#DB9836;
+  position:relative;
+  z-index:7;
+  background:#db9836;
   width:100%;
 }
 .gallery{
@@ -255,6 +257,7 @@ opacity:1;
 .discount{
   display: flex;
   padding: 0 5rem;
+  
   padding:0 3.56vw;
   gap:1vw;
   align-items:center;
