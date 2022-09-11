@@ -36,7 +36,8 @@ const Categories = () => {
     const fetchData = async ()=>{
       try{
         setisLoading(false);
-        const data = await axios.get(`/api/products?cate="${cate}"`);
+        console.log(cate);
+        const data = await axios.get(`/api/products?cate=${cate}`);
         setProducts(data.data);
         setisLoading(true);
       }catch(error){}
@@ -100,6 +101,7 @@ const Wrapper = styled(motion.section)`
   h1 {
     text-align: center;
     font-size: 1.5rem;
+    text-transform:capitalize;
     text-transform:capitalize;
     color:#353B43;
     line-height: 1.2em;

@@ -5,7 +5,10 @@ require("dotenv").config()
 
 exports.handler = async (event,context)=>{
     
-    let tables = event.queryStringParameters.cate==="\"men\""?"men":"projects";
+    // let tables = event.queryStringParameters.cate==="\"men\""?"men":"projects";
+    let tables = event.queryStringParameters.cate==="men" ?"men":"projects";
+
+    console.log(event.queryStringParameters.cate);
     
     const airtable = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
       .base('appcraBS6DJKAua0l')
@@ -51,7 +54,7 @@ exports.handler = async (event,context)=>{
     try{
         
    
-      console.log("yes",event.queryStringParameters.id);
+    //   console.log("yes",event.queryStringParameters.id);
    
     //   const data = event.queryStringParameters.id
     //   const records= await airtable.retrieve(data);
@@ -66,9 +69,9 @@ exports.handler = async (event,context)=>{
         const {records} = await airtable.list({
         maxRecords: 2000,
         })
+        // console.log(records);
 
         // const record = getRecord();
-        console.log(records);
     // const products = records.map((product)=>{
     //     const {category} = product.fields
     // const cate = category[0]
@@ -127,10 +130,5 @@ exports.handler = async (event,context)=>{
             }
         )
       }
-    return (
-        {
-            statusCode:200,
-            body:"[{you:yes botty}]"
-        }
-    )
+  
 }

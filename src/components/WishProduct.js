@@ -68,10 +68,10 @@ export const WishProduct = () => {
         >
           <div className="prop">
             <div className="sizes">
-              <span className={`${true ? "" : ""}`}>S</span>
-              <span className={`${true ? "" : ""}`}> M</span>
-              <span className={`${true ? "active" : ""}`}> L</span>
-              <span className={`${true ? "" : ""}`}> XL</span>
+              <span className={`${false ? "active" : ""}`}>S</span>
+              <span className={`${false ? "active" : ""}`}> M</span>
+              <span className={`${false ? "active" : ""}`}> L</span>
+              <span className={`${false ? "active" : ""}`}> XL</span>
             </div>
             <p></p>
           </div>
@@ -192,11 +192,11 @@ const Wrapper = styled.section`
         gap: 0.5vw;
 
         span {
-          // padding: 0.2vw 0.4vw;
-          width: 20px;
-          height: 20px;
-          width: max(1.4vw, 15px);
-          height: max(1.4vw, 15px);
+          padding: 0.2vw 0.4vw;
+          // width: 20px;
+          // height: 20px;
+          // width: max(1.4vw, 15px);
+          // height: max(1.4vw, 15px);
           place-items: center;
           display: grid;
           color: grey;

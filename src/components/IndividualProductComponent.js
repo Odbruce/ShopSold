@@ -45,7 +45,7 @@ const IndividualProductComponent = ({ products, cate, id }) => {
     const fetchData = async () => {
       setisLoading(false);
       try {
-        const product = await axios.get(`/api/products?cate="${cate}"`);
+        const product = await axios.get(`/api/products?cate=${cate}`);
         const { data } = product;
         const filtered = data.filter((items) => {
           const { name } = items;

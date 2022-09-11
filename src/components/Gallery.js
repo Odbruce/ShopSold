@@ -26,7 +26,7 @@ const Gallery = () => {
     const fetchData = async () => {
       setisLoading(false);
       try {
-        const product = await axios.get(`/api/products?cate="${cate}"`);
+        const product = await axios.get(`/api/products?cate=${cate}`);
         const { data } = product;
         console.log(data);
         const filtered = data.filter((items) => {

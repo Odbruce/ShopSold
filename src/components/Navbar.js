@@ -1,8 +1,9 @@
 import { Link, useMatch, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { RiShoppingBag3Fill } from "react-icons/ri";
+import { RiBodyScanFill, RiShoppingBag3Fill } from "react-icons/ri";
 import { BsBookmarkHeart, BsSearch } from "react-icons/bs";
+import { Navmodal } from "../Utilities/Navmodal";
 import { GrClose } from "react-icons/gr";
 import { BsFacebook, BsInstagram, BsTwitter, BsSnapchat } from "react-icons/bs";
 
@@ -13,12 +14,32 @@ const Navbar = () => {
   const matchshop = useMatch("/shop/*");
   const { cate } = useParams();
 
-  const run = true;
+  const [navmodal, setnavmodal] = useState("");
+
+  const navfunc = (e) => {
+    const { top, bottom, left, width, height, right } =
+      e.target.getBoundingClientRect();
+    setnavmodal(e.target.textContent.toLowerCase());
+    const modal = document.getElementById("navmodal");
+    const { height: modalheight } = modal.getBoundingClientRect();
+    modal.style.top = `${top + height}px`;
+    modal.style.left = `${left - 10 + width / 2}px`;
+    modal.style.display = "flex";
+    // modal.style.height = "fit-content";
+  };
+
+  const closeSubmenu = (e) => {
+    if (!e.target.classList.contains("men")) {
+      const modal = document.getElementById("navmodal");
+      modal.style.display = "none";
+    }
+  };
   // console.log(matchshop.params["*"]);
 
   const [hide, setHide] = useState(true);
   const [enter, setEnter] = useState({ btn1: true, btn2: false });
   const [bar, setbar] = useState(false);
+  const [isFocused, setIsfocused] = useState(false);
 
   const scrollLog = () => {
     console.log("ok...");
@@ -45,6 +66,8 @@ const Navbar = () => {
   // window.onscroll();
   return (
     <>
+      {<Navmodal name={navmodal} />}
+
       <div className="product-heading">
         <div className="discount">
           <p>
@@ -147,60 +170,63 @@ const Navbar = () => {
           className={bar ? "nav_wrap blur_active" : "nav_wrap"}
         ></div>
       </NavWrapper>
-      <Wrapper animate={{ opacity: !matchome ? 1 : 0 }} id="nav_id">
-        {/* <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="search_shade"
-        >
-          <div className="search_products">
-            <form action="">
-              <input type="text" />
-            </form>
-            <div className="search_product">
-              <div className="search_img"></div>
-              <div className="search_name">
-                <p>Lorem ipsum dolor .</p>
+      <Wrapper
+        onMouseOver={closeSubmenu}
+        animate={{ opacity: !matchome ? 1 : 0 }}
+        id="nav_id"
+      >
+        {isFocused && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="search_shade"
+          >
+            <div className="search_products">
+              <div className="search_product">
+                <div className="search_img"></div>
+                <div className="search_name">
+                  <p>Lorem ipsum dolor .</p>
+                </div>
+              </div>
+              <div className="search_product">
+                <div className="search_img"></div>
+                <div className="search_name">
+                  <p>Lorem ipsum dolor sit.</p>
+                </div>
+              </div>
+              <div className="search_product">
+                <div className="search_img"></div>
+                <div className="search_name">
+                  <p>Lorem ipsum dolor sit.</p>
+                </div>
+              </div>
+              <div className="search_product">
+                <div className="search_img"></div>
+                <div className="search_name">
+                  <p>Lorem ipsum dolor sit.</p>
+                </div>
+              </div>
+              <div className="search_product">
+                <div className="search_img"></div>
+                <div className="search_name">
+                  <p>Lorem ipsum dolor sit.</p>
+                </div>
+              </div>
+              <div className="search_product">
+                <div className="search_img"></div>
+                <div className="search_name">
+                  <p>Lorem ipsum dolor sit.</p>
+                </div>
+              </div>
+              <div className="search_product">
+                <div className="search_img"></div>
+                <div className="search_name">
+                  <p>Lorem ipsum dolor sit.</p>
+                </div>
               </div>
             </div>
-            <div className="search_product">
-              <div className="search_img"></div>
-              <div className="search_name">
-                <p>Lorem ipsum dolor sit.</p>
-              </div>
-            </div>
-            <div className="search_product">
-              <div className="search_img"></div>
-              <div className="search_name">
-                <p>Lorem ipsum dolor sit.</p>
-              </div>
-            </div>
-            <div className="search_product">
-              <div className="search_img"></div>
-              <div className="search_name">
-                <p>Lorem ipsum dolor sit.</p>
-              </div>
-            </div>
-            <div className="search_product">
-              <div className="search_img"></div>
-              <div className="search_name">
-                <p>Lorem ipsum dolor sit.</p>
-              </div>
-            </div>
-            <div className="search_product">
-              <div className="search_img"></div>
-              <div className="search_name">
-                <p>Lorem ipsum dolor sit.</p>
-              </div>
-            </div>
-            <div className="search_product">
-              <div className="search_img"></div>
-              <div className="search_name">
-                <p>Lorem ipsum dolor sit.</p>
-              </div>
-            </div>
-          </div>
-        </motion.div> */}
+          </motion.div>
+        )}
         <div
           onClick={() => {
             setbar(!bar);
@@ -213,12 +239,12 @@ const Navbar = () => {
         </div>
 
         <div className="nav-buttons">
-          <button>
+          <button onMouseOver={navfunc}>
             <Link className={cate === "men" ? "active" : "men"} to="/shop/men">
               MEN
             </Link>
           </button>
-          <button>
+          <button onMouseOver={navfunc}>
             <Link
               className={cate === "women" ? "active" : "men"}
               to="/shop/women"
@@ -226,7 +252,7 @@ const Navbar = () => {
               WOMEN
             </Link>
           </button>
-          <button>CONTACT</button>
+          <button className="men">CONTACT</button>
         </div>
         <Link aria-disabled className="shopsold" to="/">
           <motion.h3
@@ -243,7 +269,7 @@ const Navbar = () => {
           </motion.h3>
         </Link>
         <ul className="ul">
-          <button className="search">
+          <button className={isFocused ? "active search" : "search"}>
             <div className="drop_display"></div>
             <GrClose className="close_me" />
             <div className="search_icon">
@@ -253,6 +279,14 @@ const Navbar = () => {
               type="text"
               placeholder="search for products"
               className="input_text"
+              onFocus={() => {
+                setIsfocused(true);
+                document.body.style.overflow = "hidden";
+              }}
+              onBlur={(e) => {
+                setIsfocused(false);
+                document.body.style.overflow = "initial";
+              }}
             />
           </button>
           <button className="hmm">
@@ -283,7 +317,7 @@ const NavWrapper = styled(motion.nav)`
   height: 100vh;
   background: whitesmoke;
   box-sizing: border-box;
-  z-index: 5;
+  z-index: 7;
   transform: translateX(-150%);
   transition: 0.2s ease-in-out transform;
 
@@ -409,11 +443,14 @@ const Wrapper = styled(motion.section)`
     position: absolute;
     top: 0;
     left: 0;
+    transition: 0.3s ease all;
     width: 100%;
     box-sizing: border-box;
     z-index: 4;
     backdrop-filter: blur(5px);
-    background: rgb(0, 0, 0, 0.1);
+    background: rgb(219, 152, 54, 0.2);
+    background: rgb(250, 250, 250, 0.2);
+    background: rgb(0, 0, 0, 0.2);
     height: 100vh;
     padding: 2vw 2vw 2vw 2vw;
 
@@ -455,6 +492,10 @@ const Wrapper = styled(motion.section)`
           border-bottom: solid 1px black;
           padding: 0 0.4rem;
           height: 50px;
+          color: #db9836;
+          color: black;
+          font-weight: 500;
+          letter-spacing: 1px;
           display: grid;
 
           p {
@@ -503,7 +544,7 @@ const Wrapper = styled(motion.section)`
   .nav-buttons,
   .ul {
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
     gap: 2vw;
   }
   button {
@@ -520,6 +561,7 @@ const Wrapper = styled(motion.section)`
   }
   .ul {
     // background:blue;
+    position: relative;
 
     .wishlist,
     .search,
@@ -537,7 +579,7 @@ const Wrapper = styled(motion.section)`
       position: relative;
 
       .drop_display {
-        position: absolute;
+        // position: absolute;
         top: 0;
         border-top-left-radius: 1rem;
         border-top-right-radius: 1rem;
@@ -554,7 +596,7 @@ const Wrapper = styled(motion.section)`
         background: transparent;
         width: 15rem;
         // width: 20rem;
-        transition: 0.8s ease-in-out width;
+        transition: 0.3s ease-in-out width;
         padding: 0.4rem 4rem 0.4rem 0.4rem;
         box-sizing: border-box;
         // width: 0;
@@ -573,6 +615,9 @@ const Wrapper = styled(motion.section)`
         letter-spacing: 1px;
         font-size: clamp(0.5rem, calc(1.3vw + 3px), 0.9rem);
         // position: absolute;
+        // right: 40vw;
+        // top: 0;
+        // transform: translate(-50%, -50%);
         outline: none;
         // opacity: 0;
         // width: 0;
@@ -580,11 +625,9 @@ const Wrapper = styled(motion.section)`
 
         &:focus {
           background: whitesmoke;
-          border: 2px solid #1862a5;
-          // border: 2px solid #0770cf;
           border: 2px solid #78aaff;
           transition: 0.4s ease-in-out all;
-          width: 20rem;
+          width: 35rem;
         }
         &::placeholder {
           font-family: futura-pt, sans-serif;
@@ -593,10 +636,13 @@ const Wrapper = styled(motion.section)`
           // color: red;
         }
       }
+
       .close_me {
         position: absolute;
         font-size: clamp(0.5rem, calc(1.3vw + 3px), 1rem);
         top: 25%;
+        // display: none;
+        opacity: 0;
         right: 2.1rem;
       }
       .search_icon {
@@ -604,7 +650,7 @@ const Wrapper = styled(motion.section)`
         position: absolute;
         font-size: clamp(0.5rem, calc(1.3vw + 3px), 1rem);
         // top: 25%;
-        // right: 5%;
+        right: 5%;
         right: 0;
         // padding: 0.5rem;
         width: 2rem;
@@ -613,7 +659,35 @@ const Wrapper = styled(motion.section)`
         place-items: center;
         color: #30281e;
         border-radius: 50%;
+      }
+    }
+
+    .active {
+      // background: red;
+      // position: relative;
+      .input_text {
+        position: absolute;
+        background: whitesmoke;
+        top: 50%;
+        right: -5vw;
+        transform: translate(-50%, -50%);
+      }
+      .close_me {
+        transform: translate(-50%, -50%);
+        right: 17.5vw;
+        transition: 0.2s ease-in-out all;
+        top: 50%;
+        z-index: 6;
+        opacity: 1;
+        // display: block;
+      }
+      .search_icon {
+        transform: translate(-50%, -50%);
+        right: 14.2vw;
+        transition: 0.3s ease all;
+        transition: 0.2s ease-in-out all;
         background: #0770cf;
+        top: 50%;
       }
     }
 
@@ -622,25 +696,22 @@ const Wrapper = styled(motion.section)`
 
       .cart_nav {
         color: #30281e;
-      }
 
-      p {
-        position: absolute;
-        background: #dd4040;
-        color: white;
-        border-radius: 50%;
-        // height:1rem;
-        // width:1rem;
-        width: 1.51vw;
-        height: 1.51vw;
-        line-height: 1.51vw;
-        width: clamp(6px, calc(1.51vw + 2px), 20px);
-        line-height: clamp(6px, calc(1.51vw + 2px), 20px);
-        height: clamp(6px, calc(1.51vw + 2px), 20px);
-        padding: 0.2vw;
-        right: -50%;
-        top: -50%;
-        font-size: clamp(6px, calc(1vw + 2px), 1.5rem);
+        p {
+          position: absolute;
+          background: #dd4040;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          width: clamp(6px, calc(1.51vw + 2px), 20px);
+          line-height: clamp(6px, calc(1.51vw + 2px), 20px);
+          height: clamp(6px, calc(1.51vw + 2px), 20px);
+          right: -50%;
+          top: -50%;
+          font-size: clamp(6px, calc(1vw + 2px), 1.5rem);
+        }
       }
     }
     .hmm {
@@ -650,6 +721,7 @@ const Wrapper = styled(motion.section)`
   }
   .nav-buttons {
     // background:purple;
+    gap: 0;
 
     @media (max-width: 780px) {
       display: none;
@@ -658,6 +730,8 @@ const Wrapper = styled(motion.section)`
     .men {
       text-decoration: none;
       color: #767879;
+      // background: red;
+      padding: 1rem;
 
       &:hover {
         color: #30281e;
