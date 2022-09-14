@@ -84,7 +84,7 @@ code {
   height:clamp(72px,8.33vw,119px);
   /* margin-bottom:1em; */
   position:relative;
-  z-index:7;
+  z-index:1;
   background:#db9836;
   width:100%;
 }
