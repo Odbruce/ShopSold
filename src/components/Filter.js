@@ -1,7 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import { useState } from "react";
 
 const Filter = () => {
+  const [range, setRange] = useState("24000");
+  const changed = (e) => {
+    setRange(e.target.value);
+  };
+
   return (
     <Wrapper>
       <section className="aside_categories">
@@ -9,15 +15,16 @@ const Filter = () => {
           <h2>Filter</h2>
           <input
             className="rotate-bar"
+            onChange={changed}
             min="12000"
             max="50000"
-            // value=""
+            value={range}
             type="range"
             name=""
             id=""
           />
           <p>
-            <b>Price:</b> N12,000 - N50,000
+            <b>Price:</b> NGN {range} - 50,000
           </p>
           <p>
             <b>Size:</b>
@@ -27,9 +34,12 @@ const Filter = () => {
             <button>XL</button>
             <button>XXL</button>
           </p>
+          <p>
+            <b>Color:</b>{" "}
+          </p>
           <button className="cursor">Filter</button>
         </div>
-        <hr />
+        {/* <hr /> */}
 
         {/* <h2 className="product_cate_head">Product Categories</h2>
         <h3 className="cursor">What's New?</h3>
@@ -53,8 +63,8 @@ export default Filter;
 
 const Wrapper = styled.aside`
   height: fit-content;
-  border: solid #353B43 2px;
-  border:solid #94A48E 2px;
+  border: solid #353b43 2px;
+  border: solid #94a48e 2px;
   display: grid;
   grid-template-rows: 1fr 10%;
   margin-right: 2em;
@@ -63,11 +73,8 @@ const Wrapper = styled.aside`
   top: 90px;
   transition: all 0.4s ease-in-out;
 
-
-  &:hover{
-  border: solid #353B43 2px;
-
-
+  &:hover {
+    border: solid #353b43 2px;
   }
 
   @media screen and (max-width: 900px) {
@@ -112,7 +119,7 @@ const Wrapper = styled.aside`
         height: 0;
         outline: none;
         border: solid grey 1px;
-        margin-bottom: 0.6em;
+        margin-bottom: 0.2em;
         appearance: none;
         width: 130px;
         width: 9.02vw;
@@ -139,7 +146,7 @@ const Wrapper = styled.aside`
 
       p {
         font-size: 0.7em;
-        font-size: clamp(12px, calc(7px + 0.6vw), 16px);
+        font-size: clamp(11px, calc(7px + 0.4vw), 12px);
         letter-spacing: 0.208vw;
         letter-spacing: 2px;
 

@@ -130,6 +130,7 @@ const Wrapper = styled(motion.section)`
       text-decoration:none;
       height: 22.22vw;
       padding:2.25rem;
+      box-sizing:initial;
       overflow: hidden;
       cursor: pointer;
       border:2px solid #94A48E;
@@ -231,6 +232,7 @@ const Wrapper = styled(motion.section)`
       height: 22.22vw;
       overflow: hidden;
       padding: 2.25rem;
+      box-sizing:initial;
       cursor: pointer;
       transition: all 0.4s ease-in-out;
       border:2px solid #94A48E;

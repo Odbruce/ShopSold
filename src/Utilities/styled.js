@@ -43,6 +43,7 @@ import styled from "styled-components";
             margin-top: 1vw;
             width: 100%;
             height: 2vw;
+            height:max(2vw,1.5rem);
             font-size: clamp(12px, calc(7px + 0.8vw), 16px);
             background: none;
             border: 2px solid transparent;

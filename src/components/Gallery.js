@@ -75,9 +75,12 @@ const Gallery = () => {
             {cate}: <span>{name}</span>
           </h2>
           <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nesciunt a
+            {/* Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nesciunt a
             facilis voluptatibus eaque id sit error cum ea saepe distinctio
-            consec
+            consec */}
+
+            Something random to fill space ,I really hope you guys are enjoying your experience with the site.
+            Quick one, do you think time would matter if you couldn't die?
           </p>
         </div>
       </div>

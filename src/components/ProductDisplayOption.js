@@ -34,6 +34,7 @@ const ProductDisplayOption = ({ cate, real, idd, product }) => {
 
               return (
                 <img
+                key={index}
                   onMouseEnter={() => {
                     select(index);
                   }}

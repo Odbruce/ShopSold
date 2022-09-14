@@ -177,6 +177,7 @@ const IndividualProductComponent = ({ products, cate, id }) => {
                 const { url } = items;
                 return (
                   <img
+                  key={index}
                     className={`${index === 1 ? "" : "inactive"}`}
                     src={url}
                     alt=""

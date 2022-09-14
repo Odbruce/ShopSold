@@ -5,6 +5,7 @@ import { RiBodyScanFill, RiShoppingBag3Fill } from "react-icons/ri";
 import { BsBookmarkHeart, BsSearch } from "react-icons/bs";
 import { Navmodal } from "../Utilities/Navmodal";
 import { GrClose } from "react-icons/gr";
+import { SearchModal } from "../Utilities/SearchModal";
 import { BsFacebook, BsInstagram, BsTwitter, BsSnapchat } from "react-icons/bs";
 
 import styled from "styled-components";
@@ -13,6 +14,7 @@ const Navbar = () => {
   const matchome = useMatch("/");
   const matchshop = useMatch("/shop/*");
   const { cate } = useParams();
+  console.log(cate);
 
   const [navmodal, setnavmodal] = useState("");
 
@@ -60,7 +62,7 @@ const Navbar = () => {
     }
   };
   useEffect(() => {
-    window.onscroll = scrollLog;
+     window.onscroll = matchshop&&scrollLog;
   });
 
   // window.onscroll();
@@ -164,8 +166,11 @@ const Navbar = () => {
           </li>
         </ul>
         <div
-          onClick={() => {
-            setbar(false);
+          onClick={(e) => {
+            document.body.style.overflow = "initial";
+              return setbar(false);
+
+            
           }}
           className={bar ? "nav_wrap blur_active" : "nav_wrap"}
         ></div>
@@ -175,61 +180,13 @@ const Navbar = () => {
         animate={{ opacity: !matchome ? 1 : 0 }}
         id="nav_id"
       >
-        {isFocused && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="search_shade"
-          >
-            <div className="search_products">
-              <div className="search_product">
-                <div className="search_img"></div>
-                <div className="search_name">
-                  <p>Lorem ipsum dolor .</p>
-                </div>
-              </div>
-              <div className="search_product">
-                <div className="search_img"></div>
-                <div className="search_name">
-                  <p>Lorem ipsum dolor sit.</p>
-                </div>
-              </div>
-              <div className="search_product">
-                <div className="search_img"></div>
-                <div className="search_name">
-                  <p>Lorem ipsum dolor sit.</p>
-                </div>
-              </div>
-              <div className="search_product">
-                <div className="search_img"></div>
-                <div className="search_name">
-                  <p>Lorem ipsum dolor sit.</p>
-                </div>
-              </div>
-              <div className="search_product">
-                <div className="search_img"></div>
-                <div className="search_name">
-                  <p>Lorem ipsum dolor sit.</p>
-                </div>
-              </div>
-              <div className="search_product">
-                <div className="search_img"></div>
-                <div className="search_name">
-                  <p>Lorem ipsum dolor sit.</p>
-                </div>
-              </div>
-              <div className="search_product">
-                <div className="search_img"></div>
-                <div className="search_name">
-                  <p>Lorem ipsum dolor sit.</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
+        {isFocused && <SearchModal Focused={{isFocused,setIsfocused}} />}
+          
         <div
           onClick={() => {
             setbar(!bar);
+             document.body.style.overflow = "hidden";
+            
           }}
           className="bars"
         >
@@ -249,7 +206,7 @@ const Navbar = () => {
               className={cate === "women" ? "active" : "men"}
               to="/shop/women"
             >
-              WOMEN
+              WOMEN {cate}
             </Link>
           </button>
           <button className="men">CONTACT</button>
@@ -270,22 +227,22 @@ const Navbar = () => {
         </Link>
         <ul className="ul">
           <button className={isFocused ? "active search" : "search"}>
-            <div className="drop_display"></div>
+            {/* <div className="drop_display"></div> */}
             <GrClose className="close_me" />
             <div className="search_icon">
-              <BsSearch />
+              <BsSearch onClick={() => {
+                setIsfocused(true);
+                document.body.style.overflow = "hidden";
+              }} />
             </div>
             <input
               type="text"
               placeholder="search for products"
               className="input_text"
+              id="inputed"
               onFocus={() => {
                 setIsfocused(true);
                 document.body.style.overflow = "hidden";
-              }}
-              onBlur={(e) => {
-                setIsfocused(false);
-                document.body.style.overflow = "initial";
               }}
             />
           </button>
@@ -439,73 +396,7 @@ const Wrapper = styled(motion.section)`
   /* box-shadow:0px 9px 9px 0px rgb(0, 0, 0,.25); */
   // background:yellow;
 
-  .search_shade {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: 0.3s ease all;
-    width: 100%;
-    box-sizing: border-box;
-    z-index: 4;
-    backdrop-filter: blur(5px);
-    background: rgb(219, 152, 54, 0.2);
-    background: rgb(250, 250, 250, 0.2);
-    background: rgb(0, 0, 0, 0.2);
-    height: 100vh;
-    padding: 2vw 2vw 2vw 2vw;
-
-    form {
-      position: fixed;
-      top: 0;
-    }
-
-    .search_products {
-      // background: red;
-      height: 70%;
-      position: relative;
-      top: 2.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 3rem;
-      align-items: center;
-      overflow: auto;
-      scrollbar-width: none;
-
-      &::-webkit-scrollbar {
-        display: none;
-      }
-
-      .search_product {
-        display: grid;
-        grid-template-columns: min-content 1fr;
-        width: 250px;
-
-        .search_img {
-          height: 50px;
-          width: 50px;
-          background: grey;
-          border-radius: 50%;
-        }
-        .search_name {
-          width: 100%;
-          margin-left: 0.4rem;
-          border-bottom: solid 1px black;
-          padding: 0 0.4rem;
-          height: 50px;
-          color: #db9836;
-          color: black;
-          font-weight: 500;
-          letter-spacing: 1px;
-          display: grid;
-
-          p {
-            align-self: center;
-            font-size: 1rem;
-          }
-        }
-      }
-    }
-  }
+  
   .bars {
     display: none;
     // background: red;
@@ -577,6 +468,7 @@ const Wrapper = styled(motion.section)`
     }
     .search {
       position: relative;
+      
 
       .drop_display {
         // position: absolute;
@@ -591,36 +483,22 @@ const Wrapper = styled(motion.section)`
 
       .input_text {
         font-family: futura-pt, sans-serif;
-        // bottom: -10%;
-        // right: -10%;
         background: transparent;
-        width: 15rem;
-        // width: 20rem;
+        width: 10rem;
         transition: 0.3s ease-in-out width;
         padding: 0.4rem 4rem 0.4rem 0.4rem;
         box-sizing: border-box;
-        // width: 0;
         border: 2px solid grey;
-        // background: whitesmoke;
-        // border-radius: 0 0 0 0;
         border-top-left-radius: 1rem 50%;
         border-bottom-left-radius: 1rem 50%;
         border-top-right-radius: 1rem 50%;
         border-bottom-right-radius: 1rem 50%;
         dislay: flex;
-        // width: 0;
-        // justify-content: flex-end;
         font-weight: lighter;
         color: #30281e;
         letter-spacing: 1px;
         font-size: clamp(0.5rem, calc(1.3vw + 3px), 0.9rem);
-        // position: absolute;
-        // right: 40vw;
-        // top: 0;
-        // transform: translate(-50%, -50%);
         outline: none;
-        // opacity: 0;
-        // width: 0;
         z-index: 5;
 
         &:focus {
@@ -635,6 +513,10 @@ const Wrapper = styled(motion.section)`
           letter-spacing: 1px;
           // color: red;
         }
+
+        @media (max-width: 780px) {
+          display:none;
+        }
       }
 
       .close_me {
@@ -644,51 +526,38 @@ const Wrapper = styled(motion.section)`
         // display: none;
         opacity: 0;
         right: 2.1rem;
+
+        @media(max-width:780px){
+          display:none;
+        }
       }
       .search_icon {
         z-index: 10;
         position: absolute;
         font-size: clamp(0.5rem, calc(1.3vw + 3px), 1rem);
-        // top: 25%;
-        right: 5%;
         right: 0;
-        // padding: 0.5rem;
         width: 2rem;
         height: 2rem;
         display: grid;
         place-items: center;
         color: #30281e;
         border-radius: 50%;
+
+        @media(max-width:780px){
+          width:fit-content;
+          height:fit-content;
+          position:relative;
+
+        }
+
       }
     }
 
     .active {
-      // background: red;
-      // position: relative;
-      .input_text {
-        position: absolute;
-        background: whitesmoke;
-        top: 50%;
-        right: -5vw;
-        transform: translate(-50%, -50%);
-      }
-      .close_me {
-        transform: translate(-50%, -50%);
-        right: 17.5vw;
-        transition: 0.2s ease-in-out all;
-        top: 50%;
-        z-index: 6;
-        opacity: 1;
-        // display: block;
-      }
-      .search_icon {
-        transform: translate(-50%, -50%);
-        right: 14.2vw;
-        transition: 0.3s ease all;
-        transition: 0.2s ease-in-out all;
-        background: #0770cf;
-        top: 50%;
-      }
+      opacity:0;
+        transition: 0.6s ease-in-out all;
+        transform:translateX(-40vw);
+
     }
 
     button {
@@ -730,7 +599,6 @@ const Wrapper = styled(motion.section)`
     .men {
       text-decoration: none;
       color: #767879;
-      // background: red;
       padding: 1rem;
 
       &:hover {

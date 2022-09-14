@@ -135,9 +135,11 @@ code {
   font-size:clamp(12px,calc(7px + 0.8vw),16px);
 }
 .video-house .category-name h2{
-  text-transform: capitalize;
+  text-transform: uppercase;
   letter-spacing: 1px;
   font-size:clamp(16px,calc(9px + 2vw),32px);
+  color: #353b43;
+
   
 }
 
@@ -752,3 +754,4 @@ sort_length
     padding:0.6em 0.5em;
   }
 }
+/* category-name */

@@ -1,22 +1,25 @@
 import { motion } from "framer-motion";
 import { Link, useMatch } from "react-router-dom";
 import { useState, useEffect } from "react";
+import {cover_page2,cover_page1,cover_page3} from "../Utilities"
 const Nav = ({ cate }) => {
   const [prop, setProp] = useState(true);
+  const [background,setBackground] = useState([]);
 
-  const [imgIndex, setimgIndex] = useState(1);
+  const [imgIndex, setimgIndex] = useState(2);
   const match = useMatch("/shop/women");
   useEffect(() => {
     match && setProp(true);
+    setBackground([cover_page1,cover_page2,cover_page3])
   }, []);
 
   useEffect(() => {
     const add = setInterval(() => {
-      if (imgIndex === 3) {
-        return setimgIndex("1");
+      if (imgIndex === 2) {
+        return setimgIndex(0);
       }
-      return setimgIndex(JSON.stringify(imgIndex++));
-    }, 1000);
+      return setimgIndex((prev)=>{return prev + 1});
+    }, 3000);
 
     return () => {
       clearInterval(add);
@@ -88,7 +91,7 @@ const Nav = ({ cate }) => {
         }}
         className="nav_open"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(./Utilities/cover_page2.jpg))`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${background[imgIndex]})`,
         }}
       >
         <motion.div
