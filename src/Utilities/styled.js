@@ -22,6 +22,11 @@ import styled from "styled-components";
           text-align: left;
           width: max(350px, 35vw);
           span {
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+
             &:nth-of-type(1) {
               color: #db9224;
             }
@@ -43,18 +48,20 @@ import styled from "styled-components";
             margin-top: 1vw;
             width: 100%;
             height: 2vw;
-            height:max(2vw,1.5rem);
+            height:max(2vw,1.7rem);
             font-size: clamp(12px, calc(7px + 0.8vw), 16px);
             background: none;
             border: 2px solid transparent;
             border-bottom: 2px solid grey;
             transition: 0.4s ease-in-out all;
-            padding: max(5px, 0.4vw);
-    
+            padding: max(8px, 1vw);
+            color:#272727;
+            letter-spacing:1px;
+
             &:focus {
               outline: none;
-            background:whitesmoke;
-            border: 2px solid #78aaff;
+              background:whitesmoke;
+              border: 2px solid #78aaff;
               border-radius: 3px;
               }
             }

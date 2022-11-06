@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useMatch } from "react-router-dom";
+import { useMatch,Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {BsFacebook,BsInstagram,BsTwitter,BsSnapchat} from "react-icons/bs"
 
@@ -7,12 +7,12 @@ const Footer = ()=>{
   const matchshop = useMatch("/shop");
 
     return (
-        <Wrapper  initial={{opacity:0}}animate={{opacity:!matchshop?1:0}} transition={{delay:1}} className="footer">
+        <Wrapper id="contact" initial={{opacity:0}}animate={{opacity:!matchshop?1:0}} transition={{delay:1}} className="footer">
             <ul>
-                <li><BsFacebook/></li>
-                <li><BsInstagram/></li>
-                <li><BsTwitter/></li>
-                <li><BsSnapchat/></li>
+                <li> <Link to="/" className="social"><BsFacebook/></Link> </li>
+                <li><Link to="/" className="social"><BsInstagram/></Link> </li>
+                <li><Link to="/" className="social"><BsTwitter/></Link> </li>
+                <li><Link to="/" className="social"><BsSnapchat/></Link> </li>
             </ul>
             <h5>COPYRIGHT &copy; 2022 SHOPSOLD</h5>
         </Wrapper>
@@ -40,7 +40,7 @@ const Footer = ()=>{
       justify-content:center;
       gap:1rem;
     
-     li{
+     .social{
       border-radius:50%;
       width:2em;
       height:2em;

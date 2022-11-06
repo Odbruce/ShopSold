@@ -1,22 +1,42 @@
-import { Link, useMatch, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, useMatch, useParams,NavLink } from "react-router-dom";
+import { useEffect, useRef,useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { RiBodyScanFill, RiShoppingBag3Fill } from "react-icons/ri";
-import { BsBookmarkHeart, BsSearch } from "react-icons/bs";
+import {  RiShoppingBag3Fill,RiShoppingBag3Line } from "react-icons/ri";
+import { BsBookmarkHeart,BsBookmarkHeartFill, BsSearch } from "react-icons/bs";
 import { Navmodal } from "../Utilities/Navmodal";
 import { GrClose } from "react-icons/gr";
+import {MdOutlineAccountCircle,MdAccountCircle,MdOutlineLogout} from "react-icons/md"
 import { SearchModal } from "../Utilities/SearchModal";
 import { BsFacebook, BsInstagram, BsTwitter, BsSnapchat } from "react-icons/bs";
-
 import styled from "styled-components";
+import { useSelector,useDispatch } from "react-redux";
+import { useFireContext } from "./FirebaseContext";
+import { cartAction } from "../store";
 
 const Navbar = () => {
   const matchome = useMatch("/");
+ 
   const matchshop = useMatch("/shop/*");
   const { cate } = useParams();
   console.log(cate);
 
-  const [navmodal, setnavmodal] = useState("");
+  const {User,logOut} = useFireContext();
+
+  console.log(User);
+  const [navmodal, setnavmodal] = useState("men");
+  const dispatch = useDispatch();
+  const numberOfProducts = useSelector((state)=>state.cart.totalProducts)
+  const cart = useSelector((state)=>state.cart.cart)
+  const men =  useSelector((state)=>{return state.productCate.men})
+  const women =  useSelector((state)=>{return state.productCate.women})
+
+
+    
+    useEffect(()=>{
+    dispatch(cartAction.total());
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    },[cart])
 
   const navfunc = (e) => {
     const { top, bottom, left, width, height, right } =
@@ -27,7 +47,6 @@ const Navbar = () => {
     modal.style.top = `${top + height}px`;
     modal.style.left = `${left - 10 + width / 2}px`;
     modal.style.display = "flex";
-    // modal.style.height = "fit-content";
   };
 
   const closeSubmenu = (e) => {
@@ -36,17 +55,21 @@ const Navbar = () => {
       modal.style.display = "none";
     }
   };
-  // console.log(matchshop.params["*"]);
 
-  const [hide, setHide] = useState(true);
-  const [enter, setEnter] = useState({ btn1: true, btn2: false });
+  const [enter, setEnter] = useState("women");
   const [bar, setbar] = useState(false);
   const [isFocused, setIsfocused] = useState(false);
+
+  const closed = ()=>{
+    const modal = document.getElementById("navmodal");
+     modal.style.display="none";
+  }
 
   const scrollLog = () => {
     console.log("ok...");
     const heading = document.getElementById("header");
     const nav = document.getElementById("nav_id");
+    const move = document.getElementById("move_header")
     const nav_bottom = nav.getBoundingClientRect().bottom;
     const scrollY = heading.getBoundingClientRect().top;
     const scrollYY = heading.getBoundingClientRect().bottom;
@@ -55,22 +78,24 @@ const Navbar = () => {
     if (nav_bottom > scrollY) {
       heading.style.opacity = 0;
       console.log("hide");
-      return setHide(false);
+      return move.style.transform="translateY(0)"
     } else {
       heading.style.opacity = 1;
-      return setHide(true);
+     return move.style.transform="translateY(50px)"
     }
   };
-  useEffect(() => {
-     window.onscroll = matchshop&&scrollLog;
-  });
 
-  // window.onscroll();
+  console.log(matchshop)
+     window.onscroll = matchshop?scrollLog:null;
+
+
+
+
   return (
     <>
       {<Navmodal name={navmodal} />}
 
-      <div className="product-heading">
+      <div id="discount" className="product-heading">
         <div className="discount">
           <p>
             <span>
@@ -82,75 +107,63 @@ const Navbar = () => {
           <div className="button">
             <button>Sign-up now</button>
           </div>
-          <button className="discount-close">
+          <button onClick={()=>document.getElementById("discount").style.display="none"} className="discount-close">
             <GrClose />
           </button>
         </div>
       </div>
       <NavWrapper
-        initial={{ x: "-150%" }}
-        animate={{ x: bar ? 0 : "-150%" }}
+        initial={{ x: "-100%" }}
+        animate={{ x: bar ? 0 : "-100%"}}
         transition={{
           duration: 0.4,
           type: "tween",
-          ease: [0.6, 0.15, 0.59, 0.9],
+          ease: [0.6,0.01,-0.05,0.95],
         }}
       >
         <div className="header">
           <button
-            onClick={() => {
-              return setEnter({ ...enter, btn1: true, btn2: false });
+          name="women"
+            onClick={(e) => {
+              return setEnter(e.target.name)
             }}
           >
-            women {enter.btn1 && <span></span>}
+            women {enter==="women" && <span></span>}
           </button>
 
           <button
-            onClick={() => {
-              return setEnter({ ...enter, btn2: !enter.btn2, btn1: false });
+          name="men"
+            onClick={(e) => {
+              return setEnter(e.target.name)
             }}
           >
-            men {enter.btn2 && <span></span>}
+            men {enter==="men" && <span></span>}
           </button>
         </div>
         <ul className="ul_nav">
-          <li>
-            <Link className="link_nav" to="">
-              <p>Lorem, ipsum</p>
-              <img src="" alt="" />
+        {  enter==="men"?men.map((item,index)=>{
+          const {name,imageUrl,values:[obj]} = item;
+          console.log(obj.type)
+            return <li key={index} >
+            <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${obj.type + "/" + name}`}>
+
+              <p>{name}</p>
+              <img src={imageUrl} alt={name} />
             </Link>
-          </li>
-          <li>
-            <Link className="link_nav" to="">
-              <p>Lorem, ipsum.</p>
-              <img src="" alt="" />
-            </Link>
-          </li>
-          <li>
-            <Link className="link_nav" to="">
-              <p>Lorem, ipsum.</p>
-              <img src="" alt="" />
-            </Link>
-          </li>
-          <li>
-            <Link className="link_nav" to="">
-              <p>Lorem, ipsum.</p>
-              <img src="" alt="" />
-            </Link>
-          </li>
-          <li>
-            <Link className="link_nav" to="">
-              <p>Lorem, ipsum.</p>
-              <img src="" alt="" />
-            </Link>
-          </li>
-          <li>
-            <Link className="link_nav" to="">
-              <p>Lorem, ipsum.</p>
-              <img src="" alt="" />
-            </Link>
-          </li>
+          </li>}):
+          women.map((item,index)=>{
+            const {name,imageUrl,values:[obj]} = item;
+            console.log(obj.type)
+              return <li key={index}>
+              <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${obj.type + "/" + name}`}>
+  
+                <p>{name}</p>
+                <img src={imageUrl} alt={name} />
+              </Link>
+            </li>})
+          }
         </ul>
+
         <ul className="footer">
           <li>
             <BsFacebook />
@@ -172,7 +185,7 @@ const Navbar = () => {
 
             
           }}
-          className={bar ? "nav_wrap blur_active" : "nav_wrap"}
+          className={bar?"nav_wrap blur_active":"nav_wrap"}
         ></div>
       </NavWrapper>
       <Wrapper
@@ -195,36 +208,42 @@ const Navbar = () => {
           <div className={`${bar ? "bar_active" : ""}`}></div>
         </div>
 
-        <div className="nav-buttons">
-          <button onMouseOver={navfunc}>
-            <Link className={cate === "men" ? "active" : "men"} to="/shop/men">
+        <div className="nav_button">
+          <button onMouseOver={navfunc} onClick={closed}>
+            <NavLink className={({isActive})=>isActive?"active men": "men"} to="/shop/men">
               MEN
-            </Link>
+            </NavLink>
           </button>
-          <button onMouseOver={navfunc}>
-            <Link
-              className={cate === "women" ? "active" : "men"}
+          <button onMouseOver={navfunc} onClick={closed}>
+            <NavLink
+              className={({isActive})=>isActive?"active men": "men"}
               to="/shop/women"
             >
-              WOMEN {cate}
-            </Link>
+              WOMEN
+            </NavLink>
           </button>
-          <button className="men">CONTACT</button>
+          <button onClick={()=>{
+            document.getElementById("contact").scrollIntoView();
+          }} className="contact">CONTACT</button>
         </div>
-        <Link aria-disabled className="shopsold" to="/">
+        <div aria-disabled className="shopsold" >
           <motion.h3
             initial={{ y: matchshop ? 50 : 0 }}
-            animate={{ y: matchshop ? (hide ? 50 : 0) : 0 }}
+            animate={{ y: matchshop ? 50 : 0 }}
             transition={{
               duration: 0.4,
               type: "tween",
               ease: [0.6, 0.15, 0.59, 0.9],
             }}
-            className="link"
+
+            id="move_header"
+            
           >
+            <Link  className="link" to="/">
             SHOP<span>SOLD</span>
+            </Link>
           </motion.h3>
-        </Link>
+        </div>
         <ul className="ul">
           <button className={isFocused ? "active search" : "search"}>
             {/* <div className="drop_display"></div> */}
@@ -247,18 +266,30 @@ const Navbar = () => {
             />
           </button>
           <button className="hmm">
-            <Link className="cart_nav" to="/cart">
-              <RiShoppingBag3Fill />
-              <p>3</p>
-            </Link>
+            <NavLink  className={({ isActive }) =>
+              isActive ?`active_nav cart_nav` :"cart_nav"} to="/cart">
+                {numberOfProducts>0&&<div><p>{numberOfProducts}</p></div>}
+                <RiShoppingBag3Fill />
+            </NavLink>
           </button>
           <button>
-            <Link className="wishlist" to="/wishlist">
-              {" "}
-              <BsBookmarkHeart />
-            </Link>
+            <NavLink className={({ isActive }) =>
+              isActive ? `active_nav wishlist` :"wishlist"} to="/wishlist">
+              {({isActive})=>isActive?<BsBookmarkHeartFill/>:<BsBookmarkHeart />}
+            </NavLink>
+
           </button>
-          {/* <button><Link  className="signin" to="/signin"><BsSearch/></Link></button> */}
+
+          {!User?(
+          <button>
+            <NavLink  className={({ isActive }) =>
+              isActive ? `signin active_nav` :"signin"} to="/identity/signin">
+              {({isActive})=>isActive?<MdAccountCircle/>:<MdOutlineAccountCircle/>}
+          </NavLink>
+          </button>):(
+          <button onClick={logOut}>
+            <MdOutlineLogout className="signout" />
+          </button>)}
         </ul>
       </Wrapper>
     </>
@@ -286,21 +317,19 @@ const NavWrapper = styled(motion.nav)`
     position: absolute;
     top: 0;
     height: 100%;
-    // background: rgb(0, 0, 0, 0.2);
-    // background: rgb(219, 152, 54, 0.1);
-    transition: 0.2s ease all;
-    width: 0vw;
+    transition: 0.6s ease all;
+    opacity:0
   }
 
   .blur_active {
     backdrop-filter: blur(3px);
+    opacity:1;
     z-index: -1;
     width: 100vw;
   }
 
   .header {
     display: flex;
-    // justify-content: space-between;
     gap: 0.2rem;
     margin-bottom: 0.6rem;
 
@@ -310,7 +339,7 @@ const NavWrapper = styled(motion.nav)`
       border: none;
       cursor: pointer;
       position: relative;
-      // border-bottom: solid 1px transparent;
+      border-bottom: solid 1px transparent;
       text-transform: uppercase;
       transition: 0.4s ease all;
 
@@ -357,10 +386,15 @@ const NavWrapper = styled(motion.nav)`
           width: 80px;
           height: 80px;
           background: #94a48e;
+          object-fit:cover;
         }
         p {
-          font-size: 12px;
+          font-size: 14px;
+          text-transform:uppercase;
           width: 200px;
+          color:#272727;
+          font-weight:500;
+          letter-spacing:1px;
         }
       }
     }
@@ -372,7 +406,7 @@ const NavWrapper = styled(motion.nav)`
     padding: 0.4rem;
     position: absolute;
     height: 50px;
-    margin-bottom: 1rem;
+    // margin-bottom: 1rem;
     bottom: 0;
     width: 100%;
     background: #94a48e;
@@ -411,7 +445,7 @@ const Wrapper = styled(motion.section)`
       div {
         height: 0.104rem;
         width: 100%;
-        transition: all ease-in-out 0.3s;
+        transition: all ease-in-out 0.7s;
         background: #79b0b0;
       }
 
@@ -432,11 +466,12 @@ const Wrapper = styled(motion.section)`
     }
   }
 
-  .nav-buttons,
+  .nav_button,
   .ul {
     display: flex;
     // justify-content: space-between;
     gap: 2vw;
+    
   }
   button {
     font-size: clamp(12px, calc(0.9vw + 3px), 14px);
@@ -445,7 +480,7 @@ const Wrapper = styled(motion.section)`
     background: transparent;
     cursor: pointer;
     transition: ease-in 0.3s;
-
+    
     &:hover {
       color: #30281e;
     }
@@ -453,23 +488,28 @@ const Wrapper = styled(motion.section)`
   .ul {
     // background:blue;
     position: relative;
-
+    
+    .signout,
+    .signin,
     .wishlist,
     .search,
     .cart_nav {
       color: #767879;
-      font-size: clamp(0.7rem, calc(1.3vw + 4px), 1.5rem);
+      font-size: clamp(0.9rem, calc(1.3vw + 4px), 1.5rem);
       display: grid;
-
+      
       &:hover {
         color: #30281e;
         transition: ease-in 0.3s;
       }
+
     }
+    
+    
     .search {
       position: relative;
       
-
+      
       .drop_display {
         // position: absolute;
         top: 0;
@@ -500,7 +540,7 @@ const Wrapper = styled(motion.section)`
         font-size: clamp(0.5rem, calc(1.3vw + 3px), 0.9rem);
         outline: none;
         z-index: 5;
-
+        
         &:focus {
           background: whitesmoke;
           border: 2px solid #78aaff;
@@ -513,7 +553,7 @@ const Wrapper = styled(motion.section)`
           letter-spacing: 1px;
           // color: red;
         }
-
+        
         @media (max-width: 780px) {
           display:none;
         }
@@ -531,23 +571,26 @@ const Wrapper = styled(motion.section)`
           display:none;
         }
       }
+      
+      
       .search_icon {
         z-index: 10;
         position: absolute;
-        font-size: clamp(0.5rem, calc(1.3vw + 3px), 1rem);
-        right: 0;
-        width: 2rem;
-        height: 2rem;
-        display: grid;
+      font-size: clamp(0.8rem, calc(1.3vw + 3px), 1.1rem);
+      
+      right: 0;
+      width: 2rem;
+      height: 2rem;
+      display: grid;
         place-items: center;
-        color: #30281e;
+        // color: #30281e;
         border-radius: 50%;
 
         @media(max-width:780px){
           width:fit-content;
           height:fit-content;
           position:relative;
-
+          
         }
 
       }
@@ -562,11 +605,22 @@ const Wrapper = styled(motion.section)`
 
     button {
       position: relative;
-
-      .cart_nav {
+      
+      .active_nav{
         color: #30281e;
+        transition: ease-in 0.3s;
+      }
 
-        p {
+      .signout{
+        color:#dd4040;
+        &:hover{
+          color:#dd4040;
+        }
+      }
+      
+      .cart_nav {
+        
+        div {
           position: absolute;
           background: #dd4040;
           color: white;
@@ -574,12 +628,11 @@ const Wrapper = styled(motion.section)`
           align-items: center;
           justify-content: center;
           border-radius: 50%;
-          width: clamp(6px, calc(1.51vw + 2px), 20px);
-          line-height: clamp(6px, calc(1.51vw + 2px), 20px);
-          height: clamp(6px, calc(1.51vw + 2px), 20px);
+          width: clamp(15px, calc(1.51vw + 2px), 40px);
+          height: clamp(15px, calc(1.51vw + 2px), 40px);
           right: -50%;
           top: -50%;
-          font-size: clamp(6px, calc(1vw + 2px), 1.5rem);
+          font-size:max(8px,0.933vw);
         }
       }
     }
@@ -588,54 +641,68 @@ const Wrapper = styled(motion.section)`
       align-self: center;
     }
   }
-  .nav-buttons {
-    // background:purple;
+  .nav_button {
     gap: 0;
+    font-family:"Segoe UI";
 
     @media (max-width: 780px) {
       display: none;
     }
-
+    .contact,
     .men {
+      font-family:"Segoe UI";
       text-decoration: none;
       color: #767879;
+      letter-spacing:1px;
       padding: 1rem;
 
-      &:hover {
-        color: #30281e;
-        transition: ease-in 0.3s;
-      }
     }
     .active {
       color: #30281e;
-      text-decoration: none;
-      background: red;
+      font-size:clamp(12px,calc(7px + 0.6vw),16px);
+      font-weight:600;
     }
   }
   .shopsold {
     position: absolute;
     letter-spacing: 2px;
-    font-size: 32px;
-    // background:red;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    // font-size: 32px;
+    // top: 50%;
+    // left: 50%;
+    // transform: translate(-50%, -50%);
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
     cursor: initial;
-    text-decoration: none;
     overflow: hidden;
 
+    #move_header{
+      transition:transform 0.4s cubic-bezier(0.5, 1, 0.89, 1);
+      display:grid;
+      // justify-content:center;
+      // align-items:center;
+      place-content:center;
+    }
+    
     .link {
-      font-size: clamp(16px, calc(2.22vw + 8px), 32px);
+      text-decoration: none;
+      font-size: clamp(18px, calc(2.22vw + 8px), 32px);
       font-weight: 500;
       cursor: pointer;
-
+      letter-spacing:2px;
       color: #353b43;
-      color: #db9224;
-    }
-    span {
-      background: #a8a98e;
-      color: #94a48e;
-      color: whitesmoke;
+      color: #db9224;  
+      user-select: none;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+
+      span {
+        background: #a8a98e;
+        padding:0 5px;
+        color: #94a48e;
+        color: whitesmoke;
+      }
     }
   }
 `;

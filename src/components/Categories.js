@@ -3,23 +3,24 @@ import { useMatch, Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 import styled from "styled-components";
+import { useSelector} from "react-redux";
 import { useEffect, useState} from "react";
 
 const Categories = () => {
   const {cate} = useParams();
   const matchshop = cate==="men"||"women";
   
-  const [products,setProducts] = useState([]);
   const [isloading,setisLoading] = useState(false)
+  const products =  useSelector((state)=>{return state.productCate[cate]})
 
   const displayproduct = (a,b=2,)=>{
     let str=[];
     for (let i = a; i < products.length/b ; i++){
-      const {name,featuredUrl} = products[i];
+      const {name,imageUrl} = products[i];
        str.push(<Link key={i} to={`/products/${cate + "/" + name}`} className="product-category">
           <div className="div">
             <img
-              src={featuredUrl}
+              src={imageUrl}
               alt={name}
             />
           </div>
@@ -32,20 +33,9 @@ const Categories = () => {
   }
       return str;
 }
-  useEffect(()=>{
-    const fetchData = async ()=>{
-      try{
-        setisLoading(false);
-        console.log(cate);
-        const data = await axios.get(`/api/products?cate=${cate}`);
-        setProducts(data.data);
-        setisLoading(true);
-      }catch(error){}
-    }
-    fetchData();
-  },[])
+ 
 
-  if(!isloading){
+  if(isloading){
     return <div className="loadingio-spinner-eclipse-54l7pcgkx2x">
     <div className="ldio-4axryukh3c">
       <div></div>
@@ -74,7 +64,7 @@ const Categories = () => {
         <div className="ad">
           <h2>PROMO 20% discount!</h2>
           <h4>on first five purchases</h4>
-          <button classname="">
+          <button className="">
             <div></div> SHOP NOW
           </button>
         </div>

@@ -1,52 +1,81 @@
 import Filter from "./Filter";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Product from "./Product";
 import ProductDisplayOption from "./ProductDisplayOption";
 import { Link, useParams } from "react-router-dom";
 import { BsChevronCompactUp } from "react-icons/bs";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useSelector, useDispatch} from "react-redux";
+import { galleryAction, getGalleryProducts } from "../store";
 
 const Gallery = () => {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setisLoading] = useState(false);
+  const sortList = ["name a-z","name z-a","price low to high","price high to low","most popular"];
+
+  // const [isLoading, setisLoading] = useState(true);
+  // const [errormsg , setErrormsg] = useState(null);
   const [idd, setid] = useState("");
   const { cate, type } = useParams();
   const [sort, setSort] = useState(false);
-  console.log(type, cate);
 
-  const sett = (id, name) => {
-    return setid({ id, name });
-  };
+ const products = useSelector((state)=>{return state.gallery.filteredProducts});
+ const sortName = useSelector((state)=>{return state.gallery.sort});
+ const {isSortOpen,isFilterOpen} = useSelector((state)=>{return state.gallery});
+ const {errormsg,loading} = useSelector((state)=>{return state.gallery});
+ const favourite = useSelector((state)=>state.productCate.savedProducts)
+ const dispatch = useDispatch();
 
-  const { videoUrl, values, name } = products;
-  console.log(videoUrl);
+ useEffect(()=>{
+  localStorage.setItem("wishlist",JSON.stringify(favourite))
+},[favourite])
 
   useEffect(() => {
-    const fetchData = async () => {
-      setisLoading(false);
-      try {
-        const product = await axios.get(`/api/products?cate=${cate}`);
-        const { data } = product;
-        console.log(data);
-        const filtered = data.filter((items) => {
-          const { name } = items;
-          if (type === "beach") {
-            return name === type + "?please";
-          }
-          return name === type;
-        });
-        console.log(filtered);
-        setProducts(...filtered);
-        setisLoading(true);
-        document.getElementById("vid").play();
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
+
+    dispatch(getGalleryProducts({cate,type}));
+    // eslint-disable-next-line
   }, []);
-  if (!isLoading) {
+
+
+
+  const { videoUrl, values, name } = products;
+  console.log(products);
+
+  console.log(loading)
+
+   const sorted = (e)=>{
+    dispatch(galleryAction.updateSort(e.target.textContent))
+  }
+
+
+  useEffect(()=>{
+
+    dispatch(galleryAction.sortProduct());
+// eslint-disable-next-line
+  },[sortName])
+  
+  useEffect(()=>{
+    dispatch(galleryAction.clearFilter())
+    // eslint-disable-next-line
+   },[])
+  
+   
+     if(errormsg){
+      console.log('error')
+       return (
+         <div className="app_loading">
+           <div className="load_head">
+            <img src={require("../Utilities/server_error.png")} />
+           </div>
+           <div className="load_footer">
+             <p className={`p_error ${errormsg?"entry":""}`}>{errormsg}</p>
+           </div>
+         </div>
+       )
+     }
+
+  if (loading) {
+    console.log('loading')
+
     return (
       <div className="loadingio-spinner-eclipse-54l7pcgkx2x">
         <div className="ldio-4axryukh3c">
@@ -56,6 +85,13 @@ const Gallery = () => {
     );
   }
 
+  if(!products  ){
+    console.log('prod')
+
+    return <h1>sorry list is empty</h1>
+  }
+  console.log('open')
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -64,7 +100,7 @@ const Gallery = () => {
     >
       <div className="video-house">
         <div className="video">
-          <video id="vid" autoplay muted loop>
+          <video id="vid" autoPlay muted loop>
             {" "}
             <source type="video/mp4" src={videoUrl} />
             your brower doesnt support html video
@@ -72,24 +108,20 @@ const Gallery = () => {
         </div>
         <div className="category-name">
           <h2>
-            {cate}: <span>{name}</span>
+          {cate}: <span>{name}</span>
           </h2>
           <p>
-            {/* Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nesciunt a
-            facilis voluptatibus eaque id sit error cum ea saepe distinctio
-            consec */}
-
             Something random to fill space ,I really hope you guys are enjoying your experience with the site.
             Quick one, do you think time would matter if you couldn't die?
           </p>
         </div>
       </div>
-      <div className={sort ? "sort_length" : "sort"}>
+      <div className={isSortOpen ? "sort_length" : "sort"}>
         <div className="sorted">
-          <h3>Sort</h3>
+          <button>Sort</button>
           <div
             onClick={() => {
-              setSort(!sort);
+              dispatch(galleryAction.openSort())
             }}
             className="arrow"
           >
@@ -97,48 +129,40 @@ const Gallery = () => {
           </div>
         </div>
         <ul>
-          <li>best matches</li>
-          <li>price low to high</li>
-          <li>price high to low</li>
-          <li>most popular</li>
-          <li>top sellers</li>
+          {sortList.map((item,index)=>{
+            return <li key={index} onClick={sorted} className={item===sortName?"active":null} >{item}</li>
+          })}
         </ul>
-        <div className="sorted visible">
-          <h3>Filter</h3>
-          <div className="arrow">
-            <BsChevronCompactUp />
-          </div>
+        <div  className="sorted visible">
+          <button onClick={() => {
+              document.getElementById("filter").classList.toggle("move_up")
+            }}>Filter</button>
+         
+         <Filter display="grid"/>
         </div>
       </div>
       <section className="gallery">
-        <Filter />
+        <Filter  />
 
         <div className="products">
-          {values.map((items) => {
-            const { id, products, url, price } = items;
+          {values.map((items,index) => {
+            const { id, products, url, price,images,stock,type,color,ratings } = items;
+            const prop = { id, products, url, price,images,stock,type,color,ratings };
             return (
               <Product
                 key={id}
-                id={id}
-                price={price}
-                sett={sett}
-                url={url}
-                name={products}
-                values={values}
                 cate={cate}
+                {...prop}
+                // name={products}
+                // id={id}
+                // price={price}
+                // url={url}
+                // values={values}
+                // i={index}
               />
             );
           })}
-
-          {/* could be a Component */}
-          {/* {idd && (
-            <ProductDisplayOption
-              idd={idd}
-              cate={cate}
-              product={values}
-              us={"uo"}
-            />
-          )} */}
+          
         </div>
       </section>
     </motion.div>

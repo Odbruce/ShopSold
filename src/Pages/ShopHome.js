@@ -19,10 +19,10 @@ const ShopHome = () => {
       opacity: 1,
 
       transition: {
-        type: "spring",
-        stiffness: 100,
-        staggerChildren: 0.4,
-        when: "beforeChildren",
+        // type: "spring",
+        // stiffness: 100,
+        // staggerChildren: 0.4,
+        // when: "beforeChildren",
       },
     },
   };
@@ -46,7 +46,7 @@ const ShopHome = () => {
 
   },[])
   const paste = cate==="men"?require("../Utilities/men_display1.mp4"):require("../Utilities/display_2.mp4");
-  console.log(paste);
+  // console.log(paste);
 
   return (
     <main>
@@ -59,11 +59,8 @@ const ShopHome = () => {
         className="container"
       >
         <div className="img-container">
-          {/* <img
-            src={paste}
-            alt=""
-          /> */}
-          <video id="vid"  autoplay muted loop>
+         
+          <video id="vid"  autoPlay muted loop>
             {" "}
             <source type="video/mp4" src={paste} />
             your brower doesnt support html video
@@ -76,22 +73,22 @@ const ShopHome = () => {
           className={"navhome_open"}
         >
           <div className="landing-write">
-            <h1 id = "header" className="shopsold_heading">
+            <motion.h1 initial={{opacity:0}} animate={{opacity:1,y:"-100%"}} transition={{duration:0.5,type:"tween",ease: [0.1, 0.17, 0.67, 0.7]}} id = "header" className="shopsold_heading">
               SHOP<span>SOLD</span>
-            </h1>
-            <div className="btn-group">
+            </motion.h1>
+            {/* <div className="btn-group">
               <Link className=" btn-gender cursor" to="/shop/men">
-                <motion.button variants={btn} className="button" onClick={""}>
+                <motion.button variants={btn} className="button" >
                   <div></div> SHOP MEN
                 </motion.button>
               </Link>
 
               <Link className=" btn-gender cursor" to="/shop/women">
-                <motion.button variants={btn} className="button" onClick={""}>
+                <motion.button variants={btn} className="button" >
                   <div></div> SHOP WOMEN
                 </motion.button>
               </Link>
-            </div>
+            </div> */}
           </div>
         </motion.div>
       </motion.div>

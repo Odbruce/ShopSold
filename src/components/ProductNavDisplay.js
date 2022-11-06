@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
 
 export const ProductNavDisplay = ({obj}) => {
   return (
@@ -18,7 +18,7 @@ export const ProductNavDisplay = ({obj}) => {
           {/* <h3>* * * * *</h3> */}
           <div className="prop_name">
             <h2>{obj.name} </h2>
-            <h3 className="h3">NGN {obj.price}</h3>
+            <h3 className="h3">{priceToLocaleCurrrency(obj.price)}</h3>
           </div>
         </div>
       </article>
@@ -31,14 +31,12 @@ const Wrapper = styled(motion.div)`
   top: 10px;
   left: 0;
   z-index: 5;
-  background: #b6ee56;
-  background: #f0f0f0;
   background:transparent;
   // height:11.1vh;
   // height: 100px;
   overflow:hidden;
   color: #242424;
-  width: 100%;
+  // width: 100%;
   // box-shadow: 0 0 20px 2px grey;
   
   article {
@@ -46,7 +44,6 @@ const Wrapper = styled(motion.div)`
     justify-content: space-between;
     align-items:center;
     width: 90%;
-    // background: red;
     margin: 0 auto;
     height: 100%;
 

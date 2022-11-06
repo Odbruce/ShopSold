@@ -1,23 +1,40 @@
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
+import { useFireContext } from "./FirebaseContext";
+
 
 const Order = ()=>{
+  const totalPrice = useSelector((state)=>state.cart.totalPrice)
+const navigate = useNavigate()
+
+const {User} = useFireContext();
+
+const checkout = ()=>{
+    if(User){
+        return navigate("/checkout")
+    }
+    return navigate("/identity/signin");
+}
     return (
         <Wrapper>
             <h3>SUMMARY</h3>
             <div className="order-bill">
                 <p><b>SUB-TOTAL</b></p>
-                <p>NGN 7200.00</p>
+                <p><b>{priceToLocaleCurrrency(totalPrice)}</b></p>
             </div>
             <div className="order-bill">
                 <p><b>DELIVERY</b></p>
-                <p>N0.00</p>
+                <p><b>N0.00</b></p>
             </div>
             <div className="order-bill">
                 <p><b>TOTAL</b></p>
-                <p className="total">NGN 7200.00</p>
+                <p id="total"><b>{priceToLocaleCurrrency(totalPrice)}</b></p>
             </div>
             
-            <button className="checkout">CHECK OUT</button>
+            <button onClick={checkout} className="checkout">{User?"CHECK OUT":"LOGIN TO PROCEED"}</button>
         </Wrapper>
     )
 }
@@ -52,11 +69,11 @@ background:#E8EBEE;
         margin:1em 0 1em 0;
         font-size:clamp(12px,calc(7px + 0.6vw),16px);
 
-
-        .total{
-            font-weight:bolder;
-            color:#30281e;
-            color:green;
+        p:nth-child(2){
+            color:grey;
+        }
+        #total{
+            color:green 
         }
     }
     .checkout{

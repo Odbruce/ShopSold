@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import axios from "axios";
 import { Next } from "../Utilities/Next";
 import { Prev } from "../Utilities/Prev";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { ProductNavDisplay } from "./ProductNavDisplay";
+import { Stars } from "../Utilities/Stars";
 import {
   FaAngleLeft,
   FaAngleUp,
@@ -17,308 +17,342 @@ import { ImStarFull, ImStarHalf, ImStarEmpty } from "react-icons/im";
 import { GrPrevious, GrNext } from "react-icons/gr";
 import { RiShoppingBag3Fill } from "react-icons/ri";
 import { Link, useMatch, useParams } from "react-router-dom";
+import { arrange } from "../Utilities/arrange";
+import { useSelector, useDispatch } from "react-redux";
+import { cartAction, productAction } from "../store";
+import { getUniqueValue } from "../Utilities/getUniqueValue";
+import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
+import { PrevAndNext } from "../Utilities/PrevAndNext";
+import { QuantityButton } from "../Utilities/QuantityButton";
+import Heart from "./Heart";
 
-const IndividualProductComponent = ({ products, cate, id }) => {
-  const [displayOpt, setdisplayOpt] = useState({
-    display: false,
-    prevScrollY: 0,
-  });
+const IndividualProductComponent = ({ pictures, name, color, price, ratings, stock, type, cate,  id }) => {
 
-  // start
-  const [isLoading, setisLoading] = useState(false);
-  const [newproduct, setnewProducts] = useState("");
-  const getProduct = (items, id) => {
-    const previndex = items.findIndex(findId);
-    function findId(item) {
-      return item.id === id;
+  const {savedProducts:favourite,allProducts:allproducts} = useSelector((state) => state.productCate);
+
+  const [errormsg, setErrormsg] = useState([]);
+
+  const [displayColor, setdisplayColor] = useState(false);
+ 
+  const [cartProp,setcartProp] = useState({color:"",size:"",qty:1});
+
+  const [display,setdisplay] = useState(false)
+  
+  const cart = useSelector((state) => state.cart.cart);
+  
+  const sizes = getUniqueValue(allproducts, "size", true);
+  
+  const dispatch = useDispatch();
+  
+  const {color:selectedColor,size,qty} = cartProp;
+
+ 
+
+  const stockLeft = () => {
+    let remainingstock = Number(stock);
+
+    const isAvailable = cart.find(
+      (item) => item.id === selectedColor + size + id
+    );
+    if (isAvailable) {
+      remainingstock = Number(stock) -  Number(isAvailable.quantity);
+
+      return remainingstock;
     }
-    console.log(items.length, previndex);
-    const plus = items[`${previndex === items.length - 1 ? 0 : previndex + 1}`];
-    const minus =
-      items[`${previndex === 0 ? items.length - 1 : previndex - 1}`];
 
-    setnewProducts({ plus, minus });
-    //  setnewProducts({name:products,price,url});
+    return remainingstock;
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setisLoading(false);
-      try {
-        const product = await axios.get(`/api/products?cate=${cate}`);
-        const { data } = product;
-        const filtered = data.filter((items) => {
-          const { name } = items;
-          if (type === "beach") {
-            return name === type + "?please";
-          }
-          return name === type;
-        });
-        console.log(data, type, cate);
-        const { values } = filtered[0];
-        getProduct(values, id);
-        setisLoading(true);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
 
-  // stop
+
+
+  const favorite = {
+    image:pictures["0"].url,
+    cate,
+    name,
+    color,
+    price,
+    ratings,
+    stock,
+    type,
+    id,}
+ 
+  const handleInput = (e) => {
+    const { name, textContent, dataset } = e.target;
+    let prop = textContent;
+    if (name === "color") {
+      optionsDisplay();
+      prop = dataset.color;
+    }
+    setcartProp({...cartProp,[name]:prop})
+  };
+
+
+console.log(price)  
+console.log(favorite)
+  useEffect(()=>{
+    console.log(price)
+    console.log(favorite)
+    dispatch(
+      productAction.addToRecentlyViewed({...favorite})
+    );
+    
+  },[])
+
+  const updateCart = () => {
+
+    dispatch(
+      cartAction.updateCart({
+        name,
+        cate,
+        type,
+        price,
+        id,
+        image: pictures["0"].url,
+        color:selectedColor,
+        size,
+        quantity:qty,
+      })
+    );
+    setcartProp({...cartProp,qty:1});
+    dispatch(cartAction.cartOpen(true));
+  };
+
+
   const refOfProp = useRef(null);
-  const { display, prevScrollY } = displayOpt;
+
+  const match = useMatch("productpersonal/*")
+
+  useEffect(()=>{
+    
+    let prevScrollY=window.scrollY;
+
   const scrollLog = () => {
-    console.log("work....");
-    if (window.pageYOffset > prevScrollY) {
+    if (window.scrollY > prevScrollY) {
       let propBottom = refOfProp.current.getBoundingClientRect().bottom;
-      let scroll = window.pageYOffset;
       const nav_cont = document.getElementById("nav_id");
       nav_cont.style.top = "-72px";
 
-      return scroll > propBottom + scroll
-        ? setdisplayOpt({ display: true, prevScrollY: scroll })
-        : (nav_cont.style.top = "-72px");
+      return window.scrollY > propBottom + window.scrollY
+        ? ( prevScrollY=window.scrollY,setdisplay(true) )
+        : (setdisplay(false));
     }
-    if (window.pageYOffset < prevScrollY) {
-      let scroll = window.pageYOffset;
+   else {
       const nav_cont = document.getElementById("nav_id");
       nav_cont.style.top = "0";
-
-      return setdisplayOpt({ display: false, prevScrollY: scroll });
+      prevScrollY=window.scrollY;
+      return setdisplay(false)
     }
   };
-  const match = useMatch("/productpersonal");
-  const [direction, setdirection] = useState("leave");
-  const prevnext = (a) => {
-    console.log(a);
-    if (a === "prev") {
-      return setdirection("prev");
-    } else if (a === "next") {
-      return setdirection("next");
-    }
-    return setdirection(a);
-  };
-  useEffect(() => {
-    // document.body.style.overflow = "hidden";
-    window.onscroll = scrollLog;
-  });
-  // window.onscroll = match ? scrollLog : null;
 
-  const [modalDisplay, setModalDisplay] = useState(false);
+
+
+    window.onscroll = match?scrollLog:null;
+})
+
+
   const optionsDisplay = () => {
-    return setModalDisplay(!modalDisplay);
+    return setdisplayColor(!displayColor);
   };
 
-  const { pictures, name, color, price, ratings, stock, type } = products;
-  console.log(pictures);
+  const quantityProps = {qty ,setcartProp ,stockLeft ,selectedColor ,size ,setErrormsg}
+
 
   return (
-    isLoading && (
-      <Wrapper>
-        <AnimatePresence>
-          {display && (
-            <ProductNavDisplay
-              obj={{ image: pictures["0"].url, name, price }}
-            />
-          )}
-        </AnimatePresence>
-        <div className="head_single_product">
-          {/* <p className="links">{cate + "/" + type + "/" + name}</p> */}
-          <div className="links">
-            <Link className="link" to={`/shop/${cate}`}>
-              {cate}/
-            </Link>
-            <Link className="link" to={`/products/${cate + "/" + type}`}>
-              {type}/
-            </Link>
-            <p className="paa">{name}</p>
-          </div>
-          <div className="switch_product">
-            <Prev prev={newproduct.minus} direction={direction} />
-            <Next next={newproduct.plus} direction={direction} />
-
-            <Link
-              to={`/productpersonal/${cate}/${newproduct.minus.id}`}
-              className="btn_contain"
-            >
-              <button>prev</button>
-              <GrPrevious
-                onMouseEnter={() => {
-                  prevnext("prev");
-                }}
-                onMouseLeave={() => {
-                  prevnext("leave");
-                }}
-                className="nav_icon"
-              />
-            </Link>
-            <Link
-              to={`/productpersonal/${cate}/${newproduct.plus.id}`}
-              className="btn_contain"
-            >
-              <button>next</button>
-              <GrNext
-                onMouseEnter={() => {
-                  prevnext("next");
-                }}
-                onMouseLeave={() => {
-                  prevnext("leave");
-                }}
-                className="nav_icon"
-              />
-            </Link>
-          </div>
+    <Wrapper>
+      <AnimatePresence>
+        {display && (
+          <ProductNavDisplay obj={{ image: pictures["0"].url, name, price }} />
+        )}
+      </AnimatePresence>
+      <div className="head_single_product">
+        <div className="links">
+          <Link className="link" to={`/shop/${cate}`}>
+            {cate}/
+          </Link>
+          <Link className="link" to={`/products/${cate + "/" + type}`}>
+            {type}/
+          </Link>
+          <p className="paa">{name}</p>
         </div>
-        <section className="page_data">
-          <div className="img">
-            <div className="sub_img">
-              {pictures.map((items, index) => {
-                const { url } = items;
-                return (
-                  <img
+
+          <PrevAndNext cate={cate} type={type} id={id}/>
+          
+      </div>
+      <section className="page_data">
+        <div className="img">
+          <div className="sub_img">
+            {pictures.map((items, index) => {
+              const { url } = items;
+              return (
+                <img
                   key={index}
-                    className={`${index === 1 ? "" : "inactive"}`}
-                    src={url}
-                    alt=""
-                  />
-                );
-              })}
-            </div>
-            <div className="main_img">
-              <img src={pictures["1"].url} alt="" />
-            </div>
+                  className={`${index === 1 ? "" : "inactive"}`}
+                  src={url}
+                  alt={name}
+                />
+              );
+            })}
           </div>
-          <section className="product_props">
-            <div className="prop_contain">
-              <div className="prop_head">
-                <h2>{name}</h2>
-                <div>
-                  <h3 className="h3">NGN {price}</h3>
-                  <div className="star">
-                    <ImStarFull />
-                    <ImStarFull />
-                    <ImStarFull />
-                    <ImStarFull />
-                    <ImStarEmpty />
-                  </div>
-                </div>
-              </div>
-
-              <div className="props">
-                <h3>Color</h3>
-                <div className="color">
-                  {
-                    <motion.div
-                      initial={{ opacity: 1, scaleX: 0, scaleY: 0 }}
-                      animate={{
-                        scaleX: modalDisplay ? 1 : 0,
-                        scaleY: modalDisplay ? 1 : 0,
-                      }}
-                      transition={{
-                        type: "spring",
-                        damping: 15,
-                      }}
-                      className="props_modal"
-                    >
-                      {color.map((items, index) => {
-                        return (
-                          <span
-                            style={{ background: items }}
-                            className={index === 1 ? "span active" : "span"}
-                          >
-                            {" "}
-                          </span>
-                        );
-                      })}
-                    </motion.div>
-                  }
-                  {/* <span>RED</span>{" "} */}
-                  <motion.button
-                    animate={{ rotateZ: modalDisplay ? 180 : 0 }}
-                    onClick={optionsDisplay}
-                  >
-                    <FaAngleUp />
-                  </motion.button>
-                </div>
-              </div>
-
-              <div className="quantity props">
-                <h3>Quatity</h3>
-                <div className="quantity_btn">
-                  <motion.button>
-                    <FaAngleLeft />
-                  </motion.button>
-                  <p>1</p>
-                  <motion.button>
-                    <FaAngleRight />
-                  </motion.button>
-                </div>
-              </div>
-              <div className="props">
-                <h3>Size</h3>
-                <div className="sizes">
-                  <span className={`${true ? "active" : ""}`}>S</span>
-                  <span className={`${true ? "" : ""}`}> M</span>
-                  <span className={`${true ? "" : ""}`}> L</span>
-                  <span className={`${true ? "" : ""}`}> XL</span>
-                </div>
-              </div>
-              <button ref={refOfProp} className="add_cart">
-                ADD TO CART{" "}
-                <span>
-                  <RiShoppingBag3Fill />
-                </span>
-              </button>
-              <div className="wishlist">
-                <FaRegHeart />
-              </div>
-            </div>
-          </section>
-        </section>
-
-        <div className="product_info">
-          <h2>PRODUCT DESCRIPTION</h2>
-          <div className="product_info_contain">
-            <div>
-              <p>
-                A skull in the sun - this new print is hand-drawn. The Undertown
-                is relaxed fitting. The cotton base showcases the printed
-                graphic on the front and back. Summer vibes.
-              </p>
-              <ul>
-                <li>Pullover</li>
-                <li>Crew neck</li>
-                <li>Hand-drawn palm tree and skull graphic</li>
-                <li>Screen printed</li>
-                <li>Model is 6'1"/186cm and is wearing size Medium</li>
-              </ul>
-            </div>
-            <div>
-              <h3>PRODUCT DETAILS</h3>
-              <ul>
-                <li>Relaxed fit</li>
-                <li>100% cotton</li>
-                <li>Machine wash inside out</li>
-              </ul>
-            </div>
-            <div>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit
-                esse soluta doloribus deleniti nulla id. Iste accusamus eius,
-                illum
-              </p>
-            </div>
+          <div className="main_img">
+            <img src={pictures["1"].url} alt="" />
           </div>
         </div>
-      </Wrapper>
-    )
+        <section className="product_props">
+          <div className="prop_contain">
+            <div className="prop_head">
+              <h2>{name}</h2>
+              <div>
+                <h3 className="h3">{priceToLocaleCurrrency(price)}</h3>
+                <div className="star">
+                  <Stars num={ratings} />
+                </div>
+              </div>
+            </div>
+
+            <div className="props">
+              <h3>Color</h3>
+              <div className="color">
+                {selectedColor && (
+                  <div
+                    className="spaned"
+                    style={{ background: !displayColor && selectedColor }}
+                  ></div>
+                )}
+
+                {
+                  <motion.div
+                    initial={{ opacity: 1, scaleX: 0, scaleY: 0 }}
+                    animate={{
+                      scaleX: displayColor ? 1 : 0,
+                      scaleY: displayColor ? 1 : 0,
+                    }}
+                    transition={{
+                      type: "spring",
+                      damping: 15,
+                    }}
+                    className="props_modal"
+                  >
+                    {color.map((items, index) => {
+                      return (
+                        <button
+                          onClick={handleInput}
+                          name="color"
+                          data-color={items}
+                          key={index}
+                          style={{ background: items }}
+                          className={
+                            selectedColor === items ? "span active" : "span"
+                          }
+                        >
+                          {" "}
+                        </button>
+                      );
+                    })}
+                  </motion.div>
+                }
+                <motion.button
+                  animate={{ rotateZ: displayColor ? -90 : 0 }}
+                  onClick={optionsDisplay}
+                >
+                  <FaAngleLeft />
+                </motion.button>
+                {!selectedColor && <p className="errormsg">{errormsg[0]}</p>}
+              </div>
+            </div>
+
+            <div className="quantity props">
+              <h3>Quatity</h3>
+             { 
+            stockLeft()===0?<p className="errormsg">product currently out of stock,please check-in later</p>:
+            <QuantityButton {...quantityProps}/>
+            }
+            </div>
+            <div className="props">
+              <h3>Size</h3>
+              <div className="sizes">
+                {sizes.map((item, index) => {
+                  return (
+                    <button
+                      key={index}
+                      onClick={handleInput}
+                      name="size"
+                      className={`${size === item ? "active span" : "span"}`}
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
+                {!size && <p className="errormsg">{errormsg[1]}</p>}
+              </div>
+            </div>
+            <button
+              ref={refOfProp}
+              onClick={updateCart}
+              className={
+                selectedColor && size ? "add_cart" : "add_cart inactive"
+              }
+              disabled={selectedColor && size && stockLeft()!== 0 ? false : true}
+            >
+              ADD TO CART{" "}
+              <span>
+                <RiShoppingBag3Fill />
+              </span>
+            </button>
+            {/* <div onClick={addToFavourite} className="wishlist">
+              {isIt ? <FaHeart /> : <FaRegHeart />}
+            </div> */}
+            <Heart {...favorite} />
+          </div>
+        </section>
+      </section>
+
+      <div className="product_info">
+        <h2>PRODUCT DESCRIPTION</h2>
+        <div className="product_info_contain">
+          <div>
+            <p>
+              A skull in the sun - this new print is hand-drawn. The Undertown
+              is relaxed fitting. The cotton base showcases the printed graphic
+              on the front and back. Summer vibes.
+            </p>
+            <ul>
+              <li>Pullover</li>
+              <li>Crew neck</li>
+              <li>Hand-drawn palm tree and skull graphic</li>
+              <li>Screen printed</li>
+              <li>Model is 6'1"/186cm and is wearing size Medium</li>
+            </ul>
+          </div>
+          <div>
+            <h3>PRODUCT DETAILS</h3>
+            <ul>
+              <li>Relaxed fit</li>
+              <li>100% cotton</li>
+              <li>Machine wash inside out</li>
+            </ul>
+          </div>
+          <div>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit esse
+              soluta doloribus deleniti nulla id. Iste accusamus eius, illum
+            </p>
+          </div>
+        </div>
+      </div>
+    </Wrapper>
   );
 };
 
 export default IndividualProductComponent;
 
 const Wrapper = styled.div`
+.errormsg{
+  position:relative;
+  bottom:-100%;
+  font-size:9px;
+  color:red;
+}
 
   .head_single_product {
     display: flex;
@@ -464,8 +498,12 @@ const Wrapper = styled.div`
             align-items: center;
             width: 5rem;
 
-            p {
+            .qty_displace {
               font-size: max(12px, calc(7px + 0.6vw));
+              width:3rem;
+              text-align:center;
+              background:transparent;
+              border:none;
               line-height: 1rem;
             }
 
@@ -494,19 +532,37 @@ const Wrapper = styled.div`
             align-items: center;
             justify-content: flex-end;
 
+            .spaned{
+              width: max(1.3vw,13px);
+              height: max(1.3vw,13px);
+              transition:0.2s 0.6s ease;
+            }
+
+            .errormsg{
+              position:absolute;
+              width:7rem;
+              bottom:-100%;
+              font-size:8px;
+              color:red;
+              text-align:end;
+            }
+
             .props_modal {
               display: flex;
               gap: 0.6rem;
               position: absolute;
               transform-origin:right bottom;
-              top:-180%;
+              // top:-180%;
               transition:0.3s all ease-in-out;
-              right:0;
+              right:40%;
           
+              
               .span {
                 width: max(1.3vw,13px);
                 height: max(1.3vw,13px);
                 border:solid 2px transparent;
+                transition: border 0.4s ease-in-out;
+
           
                 &:nth-of-type(1) {
                   background: red;
@@ -549,16 +605,40 @@ const Wrapper = styled.div`
             width: 7rem;
             display: flex;
             justify-content: space-between;
+            position:relative;
 
-            span {
-              padding: 0.2vw 0.4vw;
+          
+              .errormsg{
+                position:absolute;
+                bottom:-8px;
+                width:100%;
+                text-align:center;
+                font-size:8px;
+                color:red;
+                text-align:end;
+              }
+
+            .span {
+              // padding: 0.2vw 0.4vw;
+              width:22px;
+              height:22px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-transform:uppercase;
               color: gray;
-              transition: border 0.4s ease-in-out;
+              font-size: clamp(11px, calc(7px + 0.4vw), 12px);
+              font-family:inherit;
+              transition: border 0.4s ease;
+              border: solid 2px transparent;
+
             }
             .active {
-              border: solid 1px black;
+              border-color: black;
               font-weight: 500;
               color: #453f39;
+              border-color: #30281e;
+              color: #30281e;
             }
           }
 
@@ -600,6 +680,10 @@ const Wrapper = styled.div`
             font-size: 1.5rem;
           font-size: clamp(15px, calc(9.6px + 0.7vw), 1.4rem);
           }
+        }
+
+        .inactive{
+          background: #453f39;
         }
         .wishlist {
           position: absolute;

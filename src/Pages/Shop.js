@@ -7,13 +7,10 @@ import { useState } from "react";
 import WhatYouMightLike from "../components/WhatYouMightLike";
 
 function Shop() {
-  const [value, setValue] = useState(true);
-  const cate = () => {
-    return setValue(!value);
-  };
+ 
   return (
     <section className="nav_home">
-        <Nav cate={cate} />
+        <Nav  />
     </section>
   );
 }

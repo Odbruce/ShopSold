@@ -2,21 +2,27 @@
     margin:0;
     padding:0;
     list-style:none;
-    
 }
 #header{
-    letter-spacing: 2px;
+    /* letter-spacing: 2px;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    position:relative;
+    bottom:clamp(4rem,13.9vw,5rem); */
+    /* clamp(2rem,10vw,5rem)
+    height:clamp(2rem,3.9vw,3rem); */
+
   }
 
 .landing-write{
-    /* height:100%; */
     display:flex;
     flex-direction:column;
-    /* justify-content: space-around; */
+    position: relative;
     gap:15vw;
     width:100%;
-    /* background:blue; */
-    /* height:450px; */
+    /* background:red; */
 }
 .container{
     margin:0 auto;
@@ -24,7 +30,6 @@
     min-height:30vh;
     height:350px;
     position: relative;
-    /* background-color: red; */
     overflow: hidden;
     display: grid;
     place-content: center;
@@ -38,10 +43,7 @@
    display: grid;
     justify-content: center;
    width:100vw;
-   /* top:0; */
-    /* background:blue; */
-    
-}
+  }
 .img-container{
     position: absolute;
     z-index:1;
@@ -64,11 +66,8 @@
     }
 }
 .btn-group{
-  /* margin-bottom:5rem; */
     display: flex;
-    /* background:red; */
     width:100%;
-    /* justify-content: space-around; */
     justify-content: center;
     gap:5rem;
     gap:clamp(2rem,10vw,5rem);
@@ -85,15 +84,10 @@
 
 .navhome_open,
 .nav_open{
-   
-    /* border-radius:0px; */
     height:100vh;
     width:100vw;
-   place-content: center;
+    place-content: center;
     margin:0 auto;
-    /* z-index:20; */
-    /* min-width:100vw; */
-    /* aspect-ratio: 16/9; */
     overflow: hidden;
     background:grey;
     /* box-shadow: 2px 5px 45px 18px  rgba(0, 0, 0, 0.5); */
@@ -117,9 +111,6 @@
 .shopsold_heading {
     font-size:clamp(42px,5vw,4rem);
     text-align:center;
-    /* margin-bottom:3.1rem; 
-    
-     */
      position:relative;
      z-index:2;
     color:#353b43; 
@@ -132,13 +123,10 @@ h1 span{
     color:whitesmoke;
 }
 .nav-bar{
-    /* width:clamp(40px,7vw,60px);
-    height:clamp(40px,7vw,60px); */
     display:flex;
     white-space: nowrap;
     position:absolute;
     justify-content: center;
-    /* border-bottom:solid 1px #F5F5F5; */
     top:4vw;
     right:4vw;
 }
@@ -152,16 +140,20 @@ h1 span{
     position:absolute;
 }
 .btn{
-    /* padding:clamp(.2rem,0.3vw,.3em); */
 background:transparent;
 font-size:clamp(0.6rem,calc(7px + 0.7vw),0.8rem);
 border:none;
-letter-spacing: 2px;
-/* border-bottom:solid #353b43 2px; */
-
-
 color:whitesmoke;
+text-decoration: none;
+letter-spacing: 2px;
+
 }
+
+/* .btn button{
+    color:whitesmoke;
+    background:transparent;
+    border:none;
+} */
 
 .btn-gender .button{
     border:solid #d2d7dd 2px ;
@@ -190,7 +182,6 @@ color:whitesmoke;
 
 #header{
     transition:ease-in 0.5s all;
-    /* letter-spacing: 1.5vw; */
 }
 .button div{
     background:#d2d7dd;
@@ -215,38 +206,3 @@ color:whitesmoke;
 .cursor,li{
     cursor:pointer;
 }
-
-/* @media screen and (max-width:480px) {
-    .nav-bar ul{
-        display:none;
-    }
-    .btn-gender{
-        width:35%;
-        height:4vh;
-        margin:2rem;
-        font-size: 1rem;
-    }
-    .nav{
-        margin-bottom:3rem;
-        height:100vh;
-        width:100%;
-        box-shadow:none;
-        margin-top:0;
-    }
-    
-} */
-/* @media screen and (max-width:825px){
-    .nav{
-        margin-bottom:3rem;
-        height:100vh;
-        width:100%;
-        box-shadow:none;
-        margin-top:0;
-    }
-    .btn-gender{
-        width:30%;
-        height:4vh;
-        margin:2rem;
-    }
-
-} */

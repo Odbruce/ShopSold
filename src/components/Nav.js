@@ -2,29 +2,38 @@ import { motion } from "framer-motion";
 import { Link, useMatch } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {cover_page2,cover_page1,cover_page3} from "../Utilities"
-const Nav = ({ cate }) => {
+import {useFireContext} from "../components/FirebaseContext"
+
+
+
+
+const Nav = () => {
   const [prop, setProp] = useState(true);
-  const [background,setBackground] = useState([]);
+  const {User} = useFireContext();
+
+  const [background,setBackground] = useState([cover_page1,cover_page2,cover_page3]);
 
   const [imgIndex, setimgIndex] = useState(2);
-  const match = useMatch("/shop/women");
-  useEffect(() => {
-    match && setProp(true);
-    setBackground([cover_page1,cover_page2,cover_page3])
-  }, []);
+  // const match = useMatch("/shop/women");
+  // useEffect(() => {
+  //   match && setProp(true);
+  //   setBackground([cover_page1,cover_page2,cover_page3])
+  // }, []);
 
-  useEffect(() => {
-    const add = setInterval(() => {
-      if (imgIndex === 2) {
-        return setimgIndex(0);
-      }
-      return setimgIndex((prev)=>{return prev + 1});
-    }, 3000);
+console.log("nav render")
 
-    return () => {
-      clearInterval(add);
-    };
-  }, [imgIndex]);
+  // useEffect(() => {
+  //   const add = setInterval(() => {
+  //     if (imgIndex === 2) {
+  //       return setimgIndex(0);
+  //     }
+  //     return setimgIndex((prev)=>{return prev + 1});
+  //   }, 3000);
+
+  //   return () => {
+  //     clearInterval(add);
+  //   };
+  // }, [imgIndex]);
 
   const main = {
     animate: {
@@ -37,6 +46,7 @@ const Nav = ({ cate }) => {
         when: "beforeChildren",
       },
     },
+    exit:{ y: 0, top: "initial", transition: { duration: 1 } }
   };
   const btn = {
     initial: {
@@ -71,8 +81,8 @@ const Nav = ({ cate }) => {
       variants={main}
       initial="initial"
       animate="animate"
-      exit={{ y: 0, top: "initial", transition: { duration: 1 } }}
-      className={"nav_container"}
+      exit="exit"
+      className = "nav_container"
     >
       {/* <img
         className="cover_img"
@@ -96,10 +106,10 @@ const Nav = ({ cate }) => {
       >
         <motion.div
           variants={signIn}
-          exit={{ opacity: 0 }}
+          // exit={{ opacity: 0 }}
           className="nav-bar "
         >
-          <motion.button className="btn cursor">Sign-in</motion.button>
+         <Link  to="/identity/signin"> <motion.button className="btn cursor">{!User?"Sign-in":null}</motion.button></Link>
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
@@ -121,9 +131,11 @@ const Nav = ({ cate }) => {
           ></motion.div>
         </motion.div>
         <motion.div className="landing-write">
-          <h1 className="shopsold_heading">
+          <motion.h1  exit={{opacity:0,transition:{duration:0.5,
+                    ease: [0.1, 0.17, 0.67, 0.7],
+                    type:"tween"}}} className="shopsold_heading">
             SHOP<span>SOLD</span>
-          </h1>
+          </motion.h1>
           <div className="btn-group">
             <Link className=" btn-gender cursor" to="shop/men">
               <motion.button
@@ -136,9 +148,7 @@ const Nav = ({ cate }) => {
                   },
                 }}
                 className="button"
-                onClick={() => {
-                  console.log("click");
-                }}
+              
               >
                 SHOP MEN
                 <div></div>
@@ -156,7 +166,6 @@ const Nav = ({ cate }) => {
                   },
                 }}
                 className="button"
-                onClick={cate}
               >
                 <div></div> SHOP WOMEN
               </motion.button>

@@ -3,30 +3,30 @@ import { useState } from "react";
 import ProductDisplayOption from "./ProductDisplayOption";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
+import Heart from "./Heart";
 
-const Product = ({ url, name, id, price, sett, cate, values }) => {
-  const us = (e) => {
-    const displayOption = document.getElementsByClassName("display_option")[0];
-    const { left, top } = e.target.getBoundingClientRect();
 
-    sett(id, name);
 
-    if (left > 0.5 * document.body.clientWidth) {
-      displayOption.style.display = "block";
-      displayOption.classList.add = "animate";
+const Product = ({ url, products:name,i, id, price, cate,images,stock,type,color,ratings  }) => {
+  
 
-      displayOption.style.left = `${
-        left - (displayOption.clientWidth - e.target.width)
-      }px`;
-      return (displayOption.style.top = `${top + window.pageYOffset}px`);
-    }
+  const [real, setReal] = useState({ display: false, pos: "" });
+  
+    
+let favorite = {
+  image:url,
+  cate,
+  name,
+  color,
+  price,
+  ratings,
+  stock,
+  type,
+  id,};
 
-    displayOption.style.top = `${top + window.pageYOffset}px`;
-    displayOption.style.left = `${left}px`;
-    displayOption.style.display = "block";
-  };
+
   const hovered = (e) => {
-    console.log(e);
     const { left } = e.target.getBoundingClientRect();
 
     if (left > 0.5 * document.body.clientWidth) {
@@ -35,32 +35,29 @@ const Product = ({ url, name, id, price, sett, cate, values }) => {
     return setReal({ display: true, pos: "left" });
   };
 
-  const [real, setReal] = useState({ display: false, pos: "" });
-  console.log(real.display);
-
   return (
     <Wrapper
-      onMouseOver={hovered}
+      onMouseEnter={hovered}
       onMouseLeave={() => {
-        console.log("leave");
         setReal({ display: false });
       }}
     >
+      
       <div className="img_container">
-        <img className="img" src={url} alt="" />
+        <Heart {...favorite} display={"none"} />
+        <img className="img" src={url} alt={name} />
       </div>
       <Link to={`/productpersonal/${cate}/${id}`} className="prod_link">
         <div className="contain">
           <p>{name}</p>
-          <p>NGN {price}</p>
+          <p>{priceToLocaleCurrrency(price)}</p>
         </div>
       </Link>
       {real.display && (
         <ProductDisplayOption
-          idd={id}
-          cate={cate}
           real={real}
-          product={values}
+          {...favorite}
+          images={images}
         />
       )}
     </Wrapper>
@@ -70,11 +67,10 @@ const Product = ({ url, name, id, price, sett, cate, values }) => {
 export default Product;
 
 const Wrapper = styled.div`
-  // height: 395px;
   margin-bottom: 5vw;
   margin-bottom: clamp(20px, 5vw, 40px);
   width: 100%;
-  // background: red;
+  max-width:300px;
   text-align: start;
   position: relative;
   font-size: 0.9em;

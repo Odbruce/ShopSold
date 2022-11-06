@@ -1,88 +1,89 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { GrClose } from "react-icons/gr";
 import { motion } from "framer-motion";
+import { useSelector,useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { cartAction } from "../store";
+import { priceToLocaleCurrrency } from "./priceToLocaleCurrrency";
+import { useFireContext } from "../components/FirebaseContext";
 
 export const CartModal = () => {
+
+  const dispatch = useDispatch();
+
+  const isCartOpen = useSelector((state)=>state.cart.isCartOpen)
+
+  const cart = useSelector((state)=>state.cart.cart)
+  const totalPrice = useSelector((state)=>state.cart.totalPrice)
+  const totalProducts = useSelector((state)=>state.cart.totalProducts)
+  const {User} = useFireContext()
+
+  const close = ()=>{
+    dispatch(cartAction.cartOpen(false));
+  }
+
+  useEffect(()=>{
+    if(cart.length<1){
+      return close()}
+  },[cart])
+  
+  
+
+
+  const deleteCart = (a)=>{
+    dispatch(cartAction.deleteCartItem(a))
+  }
+
+  // useEffect(()=>{
+
+  //   let clear = setTimeout(()=>{dispatch(cartAction.cartOpen(false))},4000);
+
+  //   // clear();
+
+  //   return ()=>clearTimeout(clear)
+  // },[cart,isCartOpen])
+
   return (
-    <Wrapper animate={{ x: false ? "0%" : "100%" }}>
+    <Wrapper animate={{ x: isCartOpen ? "0%" : "100%" }}>
       <div className="cart_head">
-        <h1>your picks(3)</h1>
-        <GrClose className="cart_close" />
+        <h1>your picks({totalProducts})</h1>
+        <GrClose onClick={close} className="cart_close" />
       </div>
       <div className="cart_products">
-        <div className="cart_product">
-          <div className="product_details">
-            <div className="product_name">
-              <p className="name">Lorem ipsum dolo bsgfiv figuir</p>
-              <p>NGN 2400</p>
+
+        {cart.map((item)=>{
+          const {name,id,cate,price,image,quantity,color,size} = item;
+          return (
+            <div key={id} className="cart_product">
+              <div className="product_details">
+                <div className="product_name">
+                  <p className="name">{name}</p>
+                  <p>{priceToLocaleCurrrency(price)}</p>
+                </div>
+                <div className="props">
+                  <p>Size : {size}</p>
+                  <p>Quatity : {quantity}</p>
+                </div>
+                <button onClick={()=>{deleteCart(id)}} className="cursor deletebtn">REMOVE</button>
+              </div>
+              <div className="product_img">
+                <img src={image} alt="" />
+              </div>
             </div>
-            <div className="props">
-              <p>Size : L</p>
-              <p>Quatity : 1</p>
-            </div>
-            <p className="cursor">REMOVE</p>
-          </div>
-          <div className="product_img">
-            <img src="" alt="" />
-          </div>
-        </div>
-        <div className="cart_product">
-          <div className="product_details">
-            <div className="product_name">
-              <p className="name">Lorem ipsum dolor </p>
-              <p>NGN 2400</p>
-            </div>
-            <div className="props">
-              <p>Size : L</p>
-              <p>Quatity : 1</p>
-            </div>
-            <p className="cursor">REMOVE</p>
-          </div>
-          <div className="product_img">
-            <img src="" alt="" />
-          </div>
-        </div>
-        <div className="cart_product">
-          <div className="product_details">
-            <div className="product_name">
-              <p className="name">Lorem ipsum dolor </p>
-              <p>NGN 2400</p>
-            </div>
-            <div className="props">
-              <p>Size : L</p>
-              <p>Quatity : 1</p>
-            </div>
-            <p className="cursor">REMOVE</p>
-          </div>
-          <div className="product_img">
-            <img src="" alt="" />
-          </div>
-        </div>
-        <div className="cart_product">
-          <div className="product_details">
-            <div className="product_name">
-              <p className="name">Lorem ipsum dolor </p>
-              <p>NGN 2400</p>
-            </div>
-            <div className="props">
-              <p>Size : L</p>
-              <p>Quatity : 1</p>
-            </div>
-            <p className="cursor">REMOVE</p>
-          </div>
-          <div className="product_img">
-            <img src="" alt="" />
-          </div>
-        </div>
+
+          )
+
+        })}
+        
       </div>
       <div className="cart_checkout">
         <div className="cart_total">
           <h3>Total</h3>
-          <p>NGN 7200</p>
+          <p>{priceToLocaleCurrrency(totalPrice)}</p>
         </div>
-        <button>CHECKOUT</button>
-        <button>CONTINUE SHOPPING</button>
+        <Link to={User?"/checkout":"/identity/signin"} onClick={close} className="cartbtn">{User?"CHECK OUT":"LOGIN TO PROCEED"}</Link>
+        <Link to="/"  onClick={close} className="cartbtn">CONTINUE SHOPPING</Link>
       </div>
     </Wrapper>
   );
@@ -159,7 +160,8 @@ const Wrapper = styled(motion.div)`
         .product_name {
           .name {
             letter-spacing: 1px;
-            text-transform: capitalize;
+            text-transform: uppercase;
+            font-weight:500;
             margin-bottom: 0.4rem;
           }
         }
@@ -181,6 +183,12 @@ const Wrapper = styled(motion.div)`
         width: 120px;
         background: grey;
         height: 150px;
+
+        img{
+          object-fit:cover;
+          width:100%;
+          height:100%;
+        }
       }
     }
   }
@@ -196,18 +204,22 @@ const Wrapper = styled(motion.div)`
     .cart_total {
       padding: 5px 0 0 0;
       box-sizing: border-box;
-
       display: flex;
       justify-content: space-between;
+
+      p{
+        color:green;
+        font-weight:500;
+      }
     }
-    button {
-      border: none;
+    .cartbtn {
+      text-decoration:none;
       background: black;
       padding: 1vw 0;
+      text-align:center;
+      letter-spacing:1px;
       cursor: pointer;
-      justify-content: center;
       color: whitesmoke;
-      align-items: center;
     }
   }
 `;

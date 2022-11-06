@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { BsBookmarkHeart, BsSearch } from "react-icons/bs";
 import { Link } from "react-router-dom";
-
+import { productAction } from "../store";
+import { useSelector, useDispatch } from "react-redux";
 import { GrClose } from "react-icons/gr";
 
 import { motion } from "framer-motion";
@@ -10,94 +11,100 @@ import styled from "styled-components";
 export const SearchModal = ({ Focused }) => {
   const { isFocused, setIsfocused } = Focused;
 
-  const closeSearch = (e) => {
-    // if (
-    //   !e.target.classList.contains("search_product") &&
-    //   !e.target.classList.contains("open")
-    // ) {
-    //   setIsfocused(false);
-    //   document.body.style.overflow = "initial";
-    // }
-    setIsfocused(false);
-    document.body.style.overflow = "initial";
-    return;
+  const dispatch = useDispatch();
+  
+  const { text, searched } = useSelector((state) => {
+    return state.productCate.filter;
+  });
+
+  console.log(searched);
+
+  const search = (e) => {
+    const { name, value } = e.target;
+
+    document.getElementById("input").focus();
+    dispatch(productAction.updateSearch({ name, value }));
   };
+
+  const clearText = () => {
+    console.log("clear")
+    document.getElementById("input").focus();
+    return dispatch(productAction.clearText());
+  };
+  const closeSearch = (e) => {
+
+      setIsfocused(false);
+      document.body.style.overflow = "initial";
+
+    return clearText();
+  };
+  useEffect(() => {
+    dispatch(productAction.filterSearch());
+  }, [text]);
 
   useEffect(() => {
     document.getElementById("input").focus();
   }, []);
+
+
+
+
 
   return (
     <Wrapper
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="search_shade"
+      // onClick={closeSearch}
     >
-      <button className="close_search">
+      <div onClick={closeSearch} className="cover"></div>
+      {/* <button className="close_search">
         <GrClose onClick={closeSearch} />
-      </button>
-      <button className={isFocused ? "active search" : "search"}>
-        <div className="drop_display"></div>
-        <GrClose className="close_me" />
+      </button> */}
+      <button className={isFocused ? "active search stay" : "search stay"}>
+        <GrClose onClick={clearText} className="close_me" />
         <div className="search_icon ">
           <BsSearch />
         </div>
         <input
           type="text"
-          placeholder="search for products"
+          placeholder="search for products or categories"
           className="input_text open"
+          name="text"
+          value={text}
           id="input"
-          onFocus={() => {
-            setIsfocused(true);
-            document.body.style.overflow = "hidden";
-            console.log(document.getElementById("inputed"));
-          }}
+          onBlur={() => document.getElementById("input").focus()}
+         
+          onChange={search}
         />
       </button>
 
-      <div className="search_products">
-        <Link to="/" className="search_product">
-          <div className="search_img"></div>
-          <div className="search_name">
-            <p>Lorem ipsum dolor .</p>
-          </div>
-        </Link>
-        <Link to="/" className="search_product">
-          <div className="search_img"></div>
-          <div className="search_name">
-            <p>Lorem ipsum dolor .</p>
-          </div>
-        </Link>
-        <Link to="/" className="search_product">
-          <div className="search_img"></div>
-          <div className="search_name">
-            <p>Lorem ipsum dolor .</p>
-          </div>
-        </Link>
-        <Link to="/" className="search_product">
-          <div className="search_img"></div>
-          <div className="search_name">
-            <p>Lorem ipsum dolor .</p>
-          </div>
-        </Link>
-        <Link to="/" className="search_product">
-          <div className="search_img"></div>
-          <div className="search_name">
-            <p>Lorem ipsum dolor .</p>
-          </div>
-        </Link>
-        <Link to="/" className="search_product">
-          <div className="search_img"></div>
-          <div className="search_name">
-            <p>Lorem ipsum dolor .</p>
-          </div>
-        </Link>
-        <Link to="/" className="search_product">
-          <div className="search_img"></div>
-          <div className="search_name">
-            <p>Lorem ipsum dolor .</p>
-          </div>
-        </Link>
+      <div  className="search_products">
+        {!text ? (
+          <p>search for products</p>
+        ) : searched.length === 0 ? (
+          <p>oops no match found</p>
+        ) : (
+          searched.map((item, index) => {
+            const { products: name, id, cate, url, type } = item;
+            return (
+              <div
+                key={id}
+              >
+                <Link
+                  to={`/productpersonal/${type}/${id}`}
+                  onClick={closeSearch}
+                  className="search_product"
+                >
+                  <img src={url} className="search_img"></img>
+                  <div className="search_name">
+                    <p>{name}</p>
+                  </div>
+                </Link>
+              </div>
+            );
+          })
+        )}
       </div>
     </Wrapper>
   );
@@ -118,7 +125,14 @@ const Wrapper = styled(motion.div)`
   height: 100vh;
   padding: 2vw 2vw 2vw 2vw;
   display: grid;
-  place-content: center;
+  // place-content: center;
+  justify-items: center;
+
+  .cover {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
 
   .close_search {
     position: absolute;
@@ -130,7 +144,6 @@ const Wrapper = styled(motion.div)`
 
   .search {
     position: relative;
-    // background:red;
     height: fit-content;
     // width: 10rem;
     width: fit-content;
@@ -140,7 +153,7 @@ const Wrapper = styled(motion.div)`
       background: transparent;
       width: 20rem;
       transition: 0.3s ease-in-out width;
-      padding: 0.4rem 4rem 0.4rem 0.4rem;
+      padding: 0.4rem 4rem 0.4rem 0.8rem;
       box-sizing: border-box;
       border: 2px solid grey;
       border-top-left-radius: 1rem 50%;
@@ -155,9 +168,9 @@ const Wrapper = styled(motion.div)`
       font-size: 0.9rem;
       outline: none;
       z-index: 5;
+      background: whitesmoke;
 
       &:focus {
-        background: whitesmoke;
         border: 2px solid #78aaff;
         transition: 0.4s ease-in-out all;
         width: 35rem;
@@ -182,7 +195,7 @@ const Wrapper = styled(motion.div)`
       position: absolute;
       // font-size: clamp(0.5rem, calc(1.3vw + 3px), 1rem);
       font-size: 0.9rem;
-      z-index: 80000;
+      z-index: 6;
       opacity: 1;
       right: 2.1rem;
       top: 25%;
@@ -210,10 +223,8 @@ const Wrapper = styled(motion.div)`
   }
 
   .search_products {
-    // background: red;
-    height: 70%;
+    height: 70vh;
     position: relative;
-    top: 2.5rem;
     display: flex;
     flex-direction: column;
     gap: 3rem;
@@ -223,6 +234,10 @@ const Wrapper = styled(motion.div)`
 
     &::-webkit-scrollbar {
       display: none;
+    }
+
+    & > p{
+      font-size:clamp(12px,calc(9px + 2vw),24px);  
     }
 
     .search_product {
@@ -235,23 +250,25 @@ const Wrapper = styled(motion.div)`
         height: 50px;
         width: 50px;
         background: grey;
+        object-fit: cover;
         border-radius: 50%;
       }
       .search_name {
         width: 100%;
         margin-left: 0.4rem;
-        border-bottom: solid 1px black;
+        border-bottom: solid 1px whitesmoke;
         padding: 0 0.4rem;
         height: 50px;
-        color: #db9836;
         color: black;
+        color: #db9836;
+        text-transform: capitalize;
         font-weight: 500;
         letter-spacing: 1px;
         display: grid;
 
         p {
           align-self: center;
-          font-size: 1rem;
+          font-size: max(12px, 1.1vw);
         }
       }
     }

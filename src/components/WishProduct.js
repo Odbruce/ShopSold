@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { BsChevronCompactDown } from "react-icons/bs";
 import { RiDeleteBin5Line } from "react-icons/ri";
@@ -6,29 +6,108 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { motion } from "framer-motion";
 // import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
-export const WishProduct = () => {
+import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
+import { useDispatch,useSelector } from "react-redux";
+import { productAction,cartAction} from "../store";
+import { getUniqueValue } from "../Utilities/getUniqueValue";
+import { Link } from "react-router-dom";
+import { QuantityButton } from "../Utilities/QuantityButton";
+
+
+
+export const WishProduct = ({wishProp}) => {
+
+  const dispatch = useDispatch();
+
+  const {name,id,color,price,image,cate,stock,type} = wishProp;
+
+  const [cartProp,setcartProp] = useState({color:"",size:"",qty:1});
+  const [errormsg, setErrormsg] = useState([]);
+  const cart = useSelector((state) => state.cart.cart);
+  const allproducts = useSelector((state) => state.productCate.allProducts);
+  const sizes = getUniqueValue(allproducts, "size", true);
+  const {color:selectedColor,size,qty} = cartProp;
+
+
+  const updateCart = () => {
+
+    dispatch(
+      cartAction.updateCart({
+        name,
+        cate,
+        type,
+        price,
+        id,
+        image,
+        color:selectedColor,
+        size,
+        quantity:qty,
+      })
+    );
+    setcartProp({color:"",size:"",qty:1});
+    dispatch(cartAction.cartOpen(true));
+  };
+
+
   const [display, setDisplay] = useState(false);
+
+  const deleteWish = ()=>{
+    dispatch(productAction.deleteWish(id));
+  }
+
+  
+
+  const dropDown = ()=>{
+    console.log("click")
+    if(display){
+    setcartProp({color:"",size:"",qty:1});
+    setErrormsg([]);
+      return setDisplay(false)
+    }
+    return setDisplay(true);
+  }
+
+  const handleInput = (e) => {
+    const { name, textContent, dataset } = e.target;
+    let prop = textContent;
+    if (name === "color") {
+      prop = dataset.color;
+    }
+    setcartProp({...cartProp,[name]:prop})
+  };
+
+  const stockLeft = () => {
+    let remainingstock = Number(stock);
+    console.log(stock)
+
+    const isAvailable = cart.find(
+      (item) => item.id === selectedColor + size + id
+    );
+    if (isAvailable) {
+      remainingstock = Number(stock) -  Number(isAvailable.quantity);
+
+      return remainingstock;
+    }
+
+
+    return remainingstock;
+  };
+
+
+  const quantityProps = {qty ,setcartProp ,stockLeft ,selectedColor ,size ,setErrormsg};
+  
+  
+
   return (
     <Wrapper>
       <div className="img_container">
-        <div className="H">
+        <div onClick={deleteWish} className="H">
           <RiDeleteBin5Line />
         </div>
-        <img className="img" src="" alt="" />
+        <img className="img" src={image} alt="" />
       </div>
-      {/* {display && (
-        <motion.button
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          className="contain"
-        >
-          <p>NGN 20000</p>
-          <p>add to cart</p>
-        </motion.button>
-      )} */}
-
-      {
-        <motion.button
+        {
+        <motion.div
           initial={{ height: "0px", opacity: 0 }}
           animate={{
             height: display ? `calc(2vw + 16px)` : "0px",
@@ -39,19 +118,22 @@ export const WishProduct = () => {
             ease: [0.6, 0.15, 0.59, 0.9],
             duration: 0.2,
           }}
-          className="contain"
+          className={selectedColor && size && stockLeft()!== 0 ? "contain add":"contain"}
+          disabled={selectedColor && size && stockLeft()!== 0 ? false : true}
+          onClick={updateCart}
+
         >
-          <p>NGN 20000</p>
+          <h2>{priceToLocaleCurrrency(price)}</h2>
           <p>add to cart</p>
-        </motion.button>
+        </motion.div>
       }
 
       <div className="header">
-        <h4>worst behaviour</h4>
+        <Link to={`/productpersonal/${cate}/${id}`} className="name">
+        <h4>{name}</h4>
+        </Link>
         <BsChevronCompactDown
-          onClick={() => {
-            setDisplay(!display);
-          }}
+          onClick={dropDown}
           className={display ? "arrow active" : "arrow"}
         ></BsChevronCompactDown>
       </div>
@@ -68,36 +150,47 @@ export const WishProduct = () => {
         >
           <div className="prop">
             <div className="sizes">
-              <span className={`${false ? "active" : ""}`}>S</span>
-              <span className={`${false ? "active" : ""}`}> M</span>
-              <span className={`${false ? "active" : ""}`}> L</span>
-              <span className={`${false ? "active" : ""}`}> XL</span>
+            {sizes.map((item, index) => {
+                  return (
+                    <button
+                      key={index}
+                      onClick={handleInput}
+                      name="size"
+                      className={`${size === item ? "active span" : "span"}`}
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
+            {!size && <p className="errormsg">{errormsg[1]}</p>}
             </div>
-            <p></p>
+
           </div>
           <div className="prop">
-            <div className="quantity_btn">
-              <motion.button>
-                <FaAngleLeft />
-              </motion.button>
-              <p>1</p>
-              <motion.button>
-                <FaAngleRight />
-              </motion.button>
-            </div>
+            { 
+            stockLeft()===0?<p className="errormsg">product currently out of stock,please check-in later</p>:
+            <QuantityButton {...quantityProps}/>}
+
             <div className="color">
-              <span
-                style={{ background: "red" }}
-                className={false ? "span active" : "span"}
-              >
-                {" "}
-              </span>
-              <span
-                style={{ background: "blue" }}
-                className={true ? "span active" : "span"}
-              >
-                {" "}
-              </span>
+            {color.map((items, index) => {
+                      return (
+                        <button
+                          onClick={handleInput}
+                          name="color"
+                          data-color={items}
+                          key={index}
+                          style={{ background: items }}
+                          className={
+                            selectedColor === items ? "span active" : "span"
+                          }
+                        >
+                          {" "}
+                        </button>
+                      );
+                    })}
+
+                {!selectedColor && <p className="errormsg">{errormsg[0]}</p>}
+            
             </div>
           </div>
         </motion.div>
@@ -117,8 +210,17 @@ const Wrapper = styled.section`
   letter-spacing: 1px;
   width: clamp(170px, 30vw, 280px);
 
+  .errormsg{
+    position:relative;
+    bottom:-100%;
+    font-size:9px;
+    color:red;
+  }
+
+
   .img_container {
     position: relative;
+
 
     .H {
       position: absolute;
@@ -133,6 +235,7 @@ const Wrapper = styled.section`
       place-items: center;
       color: #453f39;
       right: 3%;
+      display:none;
     }
 
     img {
@@ -148,27 +251,44 @@ const Wrapper = styled.section`
       background: #c2ccbe;
       margin-bottom: 1em;
     }
+
+    &:hover .H{
+      display:grid;
+    }
   }
   .contain {
     position: relative;
-    z-index: -1;
     display: flex;
     color: black;
-    font-size: clamp(12px, calc(7px + 0.6vw), 16px);
     justify-content: space-between;
     border: 2px solid grey;
     color: grey;
     width: 100%;
     // padding: 1vw 0.5rem;
     padding: 0 0.5rem;
-
-    text-transform: capitalize;
+    text-transform: uppercase;
     align-items: center;
-    cursor: pointer;
     margin-bottom: 1vw;
     height: calc(2vw + 16px);
     overflow: hidden;
-    // padding: 0;
+    transition: border 0.4s ease-in-out;
+    font-size: clamp(10px, calc(7px + 0.6vw), 15px);
+    font-weight:600;
+    cursor: pointer;
+
+    h2{
+      font-size: clamp(11px, calc(7px + 0.6vw), 16px);
+    }
+  }
+  .add{
+    border:2px solid #272727;
+    h2{
+      color:green
+    }
+    p{
+      color:#272727;
+    }
+
   }
   .props {
     transition: 1s ease;
@@ -188,22 +308,34 @@ const Wrapper = styled.section`
       .sizes {
         width: 7rem;
         display: flex;
-        // justify-content: space-between;
+        justify-content: space-between;
+        position:relative;
         gap: 0.5vw;
 
-        span {
-          padding: 0.2vw 0.4vw;
-          // width: 20px;
-          // height: 20px;
-          // width: max(1.4vw, 15px);
-          // height: max(1.4vw, 15px);
+        .errormsg{
+          position:absolute;
+          width:7rem;
+          bottom:-25%;
+          font-size:8px;
+          color:red;
+          text-align:end;
+        }
+
+        button {
+          border: solid 2px transparent;
+          background:transparent;
+          text-transform:uppercase;
+          width:22px;
+          height:22px;
           place-items: center;
           display: grid;
           color: grey;
           transition: border 0.4s ease-in-out;
+          cursor: pointer;
+
         }
         .active {
-          border: solid 1px black;
+          border: solid 2px black;
           font-weight: 500;
           color: #453f39;
         }
@@ -211,12 +343,28 @@ const Wrapper = styled.section`
       .color {
         display: flex;
         gap: 0.5vw;
+        position:relative;
+
+
+        .errormsg{
+          position:absolute;
+          width:7rem;
+          bottom:-50%;
+          right:0%;
+          font-size:8px;
+          color:red;
+          text-align:end;
+        }
+
         .span {
           width: 1.2rem;
           height: 1.2rem;
           width: max(1.4vw, 10px);
           height: max(1.4vw, 10px);
           border: solid 2px transparent;
+          transition: border 0.4s ease-in-out;
+          cursor: pointer;
+
         }
         .active {
           border-color: white;
@@ -229,10 +377,14 @@ const Wrapper = styled.section`
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 5rem;
+        // width: 5rem; 
 
-        p {
+        .qty_displace {
           font-size: max(12px, calc(7px + 0.6vw));
+          width:3rem;
+          text-align:center;
+          background:transparent;
+          border:none;
           line-height: 1rem;
         }
 
@@ -257,8 +409,11 @@ const Wrapper = styled.section`
     font-size: clamp(12px, calc(7px + 0.6vw), 16px);
     display: flex;
 
-    h4 {
+    .name {
       font-weight: 400;
+      color: #453f39;
+      text-decoration:none;
+      
     }
     .arrow {
       transition: 0.7s ease;

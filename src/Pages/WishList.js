@@ -1,10 +1,22 @@
-import React from "react";
+import React,{useEffect} from "react";
 import styled from "styled-components";
 import { WishProduct } from "../components/WishProduct";
 import { Advertise } from "../Utilities/styled";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { CartModal } from "../Utilities/CartModal";
+
+
 
 const WishList = () => {
+
+  const wishProducts = useSelector((state)=>state.productCate.savedProducts)
+
+  useEffect(()=>{
+    localStorage.setItem("wishlist",JSON.stringify(wishProducts))
+  },[wishProducts])
+
+
   return (
     <Wrapper>
       <div className="wishlist">
@@ -20,33 +32,26 @@ const WishList = () => {
             }}
           ></motion.div>
         </div>
-        <p>2 items</p>
+        {wishProducts.length>0&&<p>{wishProducts.length} item{wishProducts.length>1?"s":""}</p>}
       </div>
       <div className="wished">
-        <WishProduct />
-        <WishProduct />
-        <WishProduct />
-        <WishProduct />
-      </div>
-      {/* <Wrapper1>
-        <div className="para">
-          <p>
-            Your wishlist will be lost at the end of your browsing session.
-            Please
-            <span> sign in</span> or <span>register</span> in order to save your
-            wishlist.
-          </p>
 
-          <p>There are currently no items in your wishlist</p>
-        </div>
-      </Wrapper1> */}
+        {wishProducts.length===0?<p>no wishlist available at the moment</p>:wishProducts.map((item)=>{
+          const {image, cate, name, color, price, ratings, stock, type,id} = item;
+          console.log(stock);
+          return <WishProduct key={id} wishProp={{name,id,price,color,stock,cate,type,image}}/>
+        })}
+      </div>
+      <CartModal/>
 
       <Advertise>
+        <article>
         <h2>
           New to <span>Shop</span>
           <span>Sold</span> ? Sign up to enjoy 10% off your first order
           (excluding sale styles).
         </h2>
+        </article>
         <form className="newletter">
           <p>
             Sign up to receive exclusive updates on our new collections and

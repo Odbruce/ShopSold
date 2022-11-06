@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from "framer-motion";
 import styled from "styled-components";
+import { priceToLocaleCurrrency } from './priceToLocaleCurrrency';
 
 export const Prev = ({prev,direction}) => {
   const {products:name,price,url} = prev;
@@ -12,7 +13,7 @@ export const Prev = ({prev,direction}) => {
                   <img src={url} alt="" />
                   <div className="prop_name">
                     <h2>{name} </h2>
-                    <h3 className="h3">NGN {price}</h3>
+                    <h3 className="h3">{priceToLocaleCurrrency(price)}</h3>
                   </div>
                 </div>
     </Wrapper>
@@ -26,10 +27,11 @@ height:100%;
 width:100%;
 
 
+
+
 .prev{
-  position:absolute;
+  position:relative;
   display: flex;
-  background:red;
   background: #f0f0f0;
   height:4rem;
   width:10rem;
@@ -40,13 +42,10 @@ width:100%;
   gap: 0.5rem;
   box-shadow: 0px 3px 9px 1px rgb(0,0,0,0.2);
 
-
- 
   @media (max-width:750px){
-    width:0rem;
-  }
-
-
+    display:none;
+  } 
+ 
   img {
     width:3.41vw;
     object-fit:cover;
@@ -72,6 +71,8 @@ width:100%;
       color:green;
     }
   }
+
+ 
 }
 
 

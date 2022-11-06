@@ -1,67 +1,53 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { ImStarFull, ImStarHalf, ImStarEmpty } from "react-icons/im";
 import styled from "styled-components";
-import { useRef, useEffect, useState } from "react";
+import {useState } from "react";
+import { Stars } from "../Utilities/Stars";
+import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
+import Heart from "./Heart";
 
-const ProductDisplayOption = ({ cate, real, idd, product }) => {
-  const filtered = product.filter((items) => {
-    const { id } = items;
-    return id === idd;
-  });
+const ProductDisplayOption = ({ real,image,images,cate,name,color, price,ratings,stock,type,id }) => {
+  const favorite = { image,cate,name,color,price,ratings,stock,type,id } 
 
-  const { url, images, id, price, products: name } = filtered[0];
-  console.log(images);
-  const refWrapper = useRef(null);
-  useEffect(() => {
-    refWrapper.current.style[real.pos] = 0;
-  }, []);
   const [img, setimage] = useState("0");
   const select = (index) => {
     return setimage(`${index}`);
   };
-
   return (
-    <Wrapper ref={refWrapper}>
-      <img className="main_img " src={images[img].url} alt="" />
+    <Wrapper pos={real.pos}>
+      <Link className="main_img" to={`/productpersonal/${cate}/${id}`}>
+        <img src={images[img]} alt={name} />
+      </Link>
       <div>
         <div className="sub_img ">
           <div className="img">
             {images.map((item, index) => {
-              const { url } = item;
               const active = img === `${index}` ? "active" : "";
 
               return (
                 <img
-                key={index}
+                  key={index}
                   onMouseEnter={() => {
                     select(index);
                   }}
                   className={`cursor ${active}`}
-                  src={url}
+                  src={item}
                   alt={name}
                 />
               );
             })}
           </div>
           <div className="display_option star">
-            <ImStarFull />
-            <ImStarFull />
-            <ImStarFull />
-            <ImStarHalf />
-            <ImStarEmpty />
+            <Stars num={ratings} />
           </div>
         </div>
         <div className="pricing">
           <Link to={`/productpersonal/${cate}/${id}`} className="name">
             {name}
           </Link>
-          <p>NGN {price}</p>
+          <p>{priceToLocaleCurrrency(price)}</p>
         </div>
-        <div className="H cursor">
-          <FaRegHeart />
-        </div>
+        <Heart {...favorite} />
       </div>
     </Wrapper>
   );
@@ -77,30 +63,29 @@ const Wrapper = styled.div`
   border: 1px solid black;
   z-index: 1;
   background: whitesmoke;
+  ${(prop) => prop.pos}:0;
 
   .cursor {
     cursor: pointer;
   }
 
-  .H {
-    position: absolute;
-    top: 2%;
-    color: #453f39;
-    right: 3%;
-  }
-
-  .main_img {
+  .main_img img {
     width: 100%;
     position: relative;
     object-position: 50% 50%;
     object-fit: cover;
     height: 350px;
     background: #e8ebee;
+    user-select: none;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
   }
   .sub_img {
     // z-index: 200;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    padding: 0 0.5rem;
     width: 100%;
     height: fit-content;
     margin-bottom: 0.5rem;
@@ -148,5 +133,19 @@ const Wrapper = styled.div`
       text-decoration: none;
       color: #453f39;
     }
+  }
+`;
+
+export const HeartIcon = styled.div`
+  position: absolute;
+  top:${(prop)=>(prop.top?"-1.5rem":"2%")};
+  color: #453f39;
+  right: ${(prop)=>(prop.right?"0.9rem":"3%")};
+  z-index: 1;
+  cursor: pointer;
+  display: ${(prop) => (prop.display === "none" ? "none" : "iniitial")};
+
+  @media screen and (max-width: 900px) {
+    display: initial;
   }
 `;

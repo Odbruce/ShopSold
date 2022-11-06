@@ -4,9 +4,7 @@ const Product = () => {
   
   return (
     <>
-      <div  >
         <Gallery />
-      </div>
     </>
   );
 };

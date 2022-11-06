@@ -5,51 +5,43 @@ import { Link } from "react-router-dom";
 
 import styled from "styled-components";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+
+
 
 export const Navmodal = ({ name }) => {
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]);
   const [isloading, setisLoading] = useState(false);
   const [i, setindex] = useState(0);
+  const menCate = useSelector((state)=>{return state.productCate.men});
+  const womenCate = useSelector((state)=>{return state.productCate.women})
 
-  // const { videoUrl } = products[0];
+  let products = name === "men"?menCate:womenCate;
+  const vid = document.getElementById("vid1");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setisLoading(false);
-        const data = await axios.get(`/api/products?cate=${name}`);
-        setProducts(data.data);
-        // setUrl({ index: 0, videoUrl: data.data[0].videoUrl });
-        setisLoading(true);
-        console.log(products);
-        setindex(0);
-        // document.getElementById("vid1").play();
-      } catch (error) {}
-    };
-    fetchData();
-  }, [name]);
+  // console.log(products[i].videoUrl);
 
-  useEffect(() => {
-    // i && document.getElementById("vid1").play();
-  }, [i]);
+  useEffect(()=>{
+    setindex(0);
+       if(vid){
+        return vid.src=products[0].videoUrl
+      };
+  },[name])
 
-  // useEffect(() => {
-  //   isloading && document.getElementById("vid1").play();
-  // }, [Url, name]);
 
-  if (!isloading) {
-    return (
-      <Wrapper>
-        <div className="loadingio-spinner-eclipse-54l7pcgkx2x">
-          <div className="ldio-4axryukh3c">
-            <div></div>
-          </div>
-        </div>
-      </Wrapper>
-    );
+  const onHovered=(num)=>{
+    setindex(num);
+    vid.src=products[num].videoUrl;
   }
+ 
+
+  const closed = ()=>{
+    const modal = document.getElementById("navmodal");
+     modal.style.display="none";
+  }
+ 
   return (
-    <Wrapper id="navmodal">
+    <Wrapper className="men" id="navmodal">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -66,16 +58,16 @@ export const Navmodal = ({ name }) => {
               return (
                 <li
                   className={`${i === index ? "active" : ""}`}
-                  onMouseOver={() => {
-                    return setindex(index);
+                  onMouseOver={() => { onHovered(index);
                   }}
                   key={index}
+                  onClick={closed}
                 >
                   <span></span>
                   <Link
                     key={index}
                     className="linked"
-                    to={`/products/${name + "/" + cate}`}
+                    to={`/products/${name}/${cate}`}
                   >
                     {cate}
                   </Link>
@@ -84,13 +76,10 @@ export const Navmodal = ({ name }) => {
             })}
           </ul>
           <div className="nav_vid">
-            {/* <video id="vid1" autoplay muted loop>
-              {" "}
-              <source type="video/mp4" src={products[i].videoUrl} />
-              your brower doesnt support html video
-            </video> */}
-
-            <img src={products[i].featuredUrl} alt="" />
+          <video id="vid1" autoPlay muted loop>
+            <source type="video/mp4" src={products[i].videoUrl} />
+            your brower doesnt support html video
+          </video>
           </div>
         </div>
       </motion.div>
@@ -213,7 +202,7 @@ const Wrapper = styled(motion.div)`
         width: 470px;
         height: 250px;
 
-        img {
+        video {
           background: #353b43;
           width: 100%;
           height: 100%;

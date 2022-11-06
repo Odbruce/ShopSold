@@ -3,10 +3,9 @@ require("dotenv").config()
 
 
 
-exports.handler = async (event,context)=>{
+exports.handler = async (event)=>{
     
-    // let tables = event.queryStringParameters.cate==="\"men\""?"men":"projects";
-    let tables = event.queryStringParameters.cate==="men" ?"men":"projects";
+    let tables = event.queryStringParameters.cate==="men" ?"men":"women";
 
     console.log(event.queryStringParameters.cate);
     
@@ -18,8 +17,17 @@ exports.handler = async (event,context)=>{
        const {id} = event.queryStringParameters
        if(id){
            try {
+               const product = await airtable.retrieve(id)
 
-            const product = await airtable.retrieve(id)
+               if(product.error){
+                   return (
+                       {
+                           headers:{"Set-Cookie": " SameSite=none; secure"},
+                           statusCode:404,
+                           body:"omo! no product matching your description found"
+                       }
+                   )
+               }
 
             const {images,ratings,price,stock,category,color,products:name} = product.fields;
             const pictures = images.map((image)=>{
@@ -27,16 +35,10 @@ exports.handler = async (event,context)=>{
                 return {id,url};
             })
 
-            if(product.error){
-                return (
-                    {
-                        statusCode:404,
-                        body:"ERR_NO_PRODUCT_FOUND"
-                    }
-                )
-            }
             return (
                 {
+                    headers:{"Set-Cookie": " SameSite=none; secure"},
+
                     statusCode:200,
                     body:JSON.stringify({name,type:category[0],pictures,ratings,price,stock,color})
                 }
@@ -45,7 +47,7 @@ exports.handler = async (event,context)=>{
             return (
                 {
                     statusCode:500,
-                    body:"SOMETHING_WENT_WRONG"
+                    body:"SERVER ERROR, PLEASE CHECK YOUR CONNECTION"
                 }
             )
            }
@@ -53,68 +55,39 @@ exports.handler = async (event,context)=>{
        
     try{
         
-   
-    //   console.log("yes",event.queryStringParameters.id);
-   
-    //   const data = event.queryStringParameters.id
-    //   const records= await airtable.retrieve(data);
-    // const getRecord =()=>{  
-        
-    //     if(event.queryStringParameters.id){
-    //         return records;
-    //     };
-    //     return records}
- 
-    
         const {records} = await airtable.list({
         maxRecords: 2000,
         })
-        // console.log(records);
+        console.log(records,"records")
 
-        // const record = getRecord();
-    // const products = records.map((product)=>{
-    //     const {category} = product.fields
-    // const cate = category[0]
-    //       return cate})  
-    //    const items = Array.from(new Set(products))
+        const products =    
+            records.filter((product)=>{
+                const {featured} = product.fields;
+                return featured;
+                }).map((item)=>{
+                        const {category,images,featuredvideo} = item.fields;
+                        const videoUrl = featuredvideo[0].url;
+                        const featuredUrl = images[0].url;
 
-    //   const view = items.map((item)=>{
-    //      let  values = records.filter((val)=>{
-    //         let ref = val.fields.category[0] ;
-    //         return item===ref
-    //      }).map((item)=>{
-    //          const {id} = item;
-    //          const {[0]:category,ratings} = item.fields;
-    //          return {id,ratings,category}
-    //      })
-    //          return {name:item,values}
-    //    })
-
-
-    const products =    
-    records.filter((product)=>{
-        const {featured} = product.fields;
-         return featured;
-    }).map((item)=>{
-             const {category,images,featuredvideo} = item.fields;
-             const videoUrl = featuredvideo[0].url;
-             const featuredUrl = images[0].url;
-
-        let  values = records.filter((val)=>{
-                    const {featuredvideo} = val.fields;
-                    let ref = val.fields.category[0] ;
-                    return category[0]===ref&!featuredvideo
-                 }).map((item)=>{
-                     const {id} = item;
-                     const {products,images,category,price} = item.fields;
-                     const url= images[0].url
-                     return {id,products,url,price,images}
-                 })
-                     return {name:category[0],featuredUrl,videoUrl,values}
+                    let  values = records.filter((val)=>{
+                                const {featuredvideo} = val.fields;
+                                let ref = val.fields.category[0] ;
+                                return category[0]===ref&!featuredvideo
+                            }).map((item)=>{
+                                const {id} = item;
+                                const {products,images,category,ratings,price,color,stock,size} = item.fields;
+                                const img = images.map((item)=>{
+                                    return item.url;
+                                })
+                                const url= images[0].url
+                                return {id,products,url,type:tables,cate:category[0],ratings,price,stock,color,images:img,size}
+                            })
+                                return {name:category[0],featuredUrl,videoUrl,values}
     })
 
     return (
       {
+          headers:{"Set-Cookie": " SameSite=none; secure"},
           statusCode:200,
           body:JSON.stringify(products)
       }
@@ -123,10 +96,12 @@ exports.handler = async (event,context)=>{
   }
     
       catch(error){
+        console.log(error,"error")
         return (
             {
+                headers:{"Set-Cookie": " SameSite=none; secure"},
                 statusCode:500,
-                body:"Server Error"
+                body:"Omo an ERROR occured while loading, please check your connection "
             }
         )
       }

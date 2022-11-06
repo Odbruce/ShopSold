@@ -1,59 +1,113 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { galleryAction } from "../store";
+import { getUniqueValue } from "../Utilities/getUniqueValue";
+import { arrange } from "../Utilities/arrange";
+import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
+import { AnimatePresence, motion } from "framer-motion";
 
-const Filter = () => {
-  const [range, setRange] = useState("24000");
+const Filter = ({display}) => {
+  const dispatch = useDispatch();
+
+  const isFilterOpen = useSelector((state)=>state.gallery.isFilterOpen)
+
+  console.log(isFilterOpen)
+
+  const filterValues = useSelector((state) => {
+    return state.gallery.filters;
+  });
+  const products = useSelector((state) => {
+    return state.gallery.allProducts;
+  });
+
+  const { color, size, min_price, max_price, price } = filterValues;
+
+  const colors = getUniqueValue(products.values, "color");
+  const sizes = getUniqueValue(products.values, "size");
+
+  useEffect(() => {
+    dispatch(galleryAction.filterProduct());
+  }, [products, filterValues]);
+
+  console.log(color);
+
+  const clearFilter = () => {
+    dispatch(galleryAction.clearFilter());
+  };
+
   const changed = (e) => {
-    setRange(e.target.value);
+    const { name, value, dataset } = e.target;
+    console.log(name, value, dataset, e.target.textContent);
+    let prop;
+    if (name === "price") {
+      prop = Number(value);
+    }
+    if (name === "color") {
+      prop = dataset.color;
+    }
+    if (name === "size") {
+      prop = e.target.textContent;
+    }
+
+    dispatch(galleryAction.updateFilter({ name, value: prop }));
   };
 
   return (
-    <Wrapper>
+    <Wrapper id="filter" className="filterr"  display={display}>
       <section className="aside_categories">
         <div className="filter ">
           <h2>Filter</h2>
           <input
             className="rotate-bar"
             onChange={changed}
-            min="12000"
-            max="50000"
-            value={range}
+            min={min_price}
+            max={max_price}
+            value={price}
             type="range"
-            name=""
+            name="price"
             id=""
           />
           <p>
-            <b>Price:</b> NGN {range} - 50,000
+            <b>PRICE: </b> {` ${priceToLocaleCurrrency(price)}-${priceToLocaleCurrrency(max_price)}`}
           </p>
           <p>
-            <b>Size:</b>
-            <button>S</button>
-            <button>M</button>
-            <button>L</button>
-            <button>XL</button>
-            <button>XXL</button>
+            <b>SIZE :</b>
+            {sizes.map((item, index) => {
+              return (
+                <button
+                  key={index}
+                  className={size === item ? "active" : null}
+                  name="size"
+                  onClick={changed}
+                >
+                  {item}
+                </button>
+              );
+            })}
           </p>
           <p>
-            <b>Color:</b>{" "}
+            <b>COLOR:</b>{" "}
+            {colors.map((item, index) => {
+              return (
+                <button
+                  data-color={item === "all" ? "all" : item}
+                  key={index}
+                  className={color === item ? "active colors" : "colors"}
+                  name="color"
+                  onClick={changed}
+                  style={{ background: `${item}` }}
+                >
+                  {item === "all" && item}
+                </button>
+              );
+            })}
           </p>
-          <button className="cursor">Filter</button>
+          {/* <button className="cursor">Filter</button> */}
+          <button onClick={clearFilter} className="cursor">
+            Clear 
+          </button>
         </div>
-        {/* <hr /> */}
-
-        {/* <h2 className="product_cate_head">Product Categories</h2>
-        <h3 className="cursor">What's New?</h3>
-        <div className="aside_cate">
-          <h3>WOMEN</h3>
-          <ul>
-            <li>Lorem, ipsum dolor.</li>
-            <li>Lorem, ipsum dolor.</li>
-            <li>Lorem, ipsum dolor.</li>
-            <li>Lorem, ipsum dolor.</li>
-            <li>Lorem, ipsum dolor.</li>
-            <li>Lorem, ipsum dolor.</li>
-          </ul>
-        </div> */}
       </section>
     </Wrapper>
   );
@@ -61,7 +115,7 @@ const Filter = () => {
 
 export default Filter;
 
-const Wrapper = styled.aside`
+const Wrapper = styled.div`
   height: fit-content;
   border: solid #353b43 2px;
   border: solid #94a48e 2px;
@@ -69,30 +123,31 @@ const Wrapper = styled.aside`
   grid-template-rows: 1fr 10%;
   margin-right: 2em;
   gap: 2em;
-  position: sticky;
+  position: ${(prop)=>(prop.display==="grid"?"absolute":"sticky")};
   top: 90px;
-  transition: all 0.4s ease-in-out;
+  right:-${(prop)=>(prop.display==="grid"?"25%":null)};
+  transition:  0.3s ease-in-out;
+  transiition-property:opacity top,
 
   &:hover {
     border: solid #353b43 2px;
   }
 
   @media screen and (max-width: 900px) {
-    display: none;
+    position:absolute;
+    justify-content:center;
+    width:250px;
+    background:#E8EBEE;
+    display:${(prop)=>(prop.display==="grid"?"grid":"none")};
+    z-index:4;
+    right:-25%;
+    transform:translateY(5px);
   }
 
   .aside_categories {
-    padding: 1em;
     padding: clamp(10px, 1em, 1.11vw);
-    height: 350px;
     color: #30281e;
-    // -ms-overflow-style: none;
-    overflow: auto;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+  
 
     h3 {
       margin-bottom: 1rem;
@@ -103,14 +158,14 @@ const Wrapper = styled.aside`
     }
 
     h2 {
-      font-size: calc(0.3rem + 1.2vw);
+      font-size:clamp(16px,calc(10px + 2vw),24px);  
       white-space: nowrap;
       font-weight: 400;
     }
 
     .filter {
       display: grid;
-      place-items: center;
+      place-items: flex-start;
       gap: 2em;
       letter-spacing: 1px;
       margin-bottom: 1em;
@@ -121,8 +176,7 @@ const Wrapper = styled.aside`
         border: solid grey 1px;
         margin-bottom: 0.2em;
         appearance: none;
-        width: 130px;
-        width: 9.02vw;
+        width: max(130px,9.02vw);
 
         &::-webkit-slider-thumb {
           appearance: none;
@@ -146,33 +200,45 @@ const Wrapper = styled.aside`
 
       p {
         font-size: 0.7em;
-        font-size: clamp(11px, calc(7px + 0.4vw), 12px);
-        letter-spacing: 0.208vw;
+        // background: green;
+        font-size: clamp(9px, calc(6px + 0.4vw), 12px);
         letter-spacing: 2px;
+        display: flex;
+        align-items: center;
 
         button {
-          border: none;
-          padding: 0.1rem;
-          padding: 0.1vw;
-          margin: 0 0.4rem;
-          margin: 0 0.24vw;
+          border: transparent 2px solid;
+          text-transform: uppercase;
+          width: 22px;
+          height: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 max(0.24vw,3px);
           font-size: inherit;
           font-family: inherit;
-          color: inherit;
+          color: #767879;
           cursor: pointer;
+        }
+        .active {
+          border-color: #30281e;
+          color: #30281e;
         }
       }
 
       button {
         width: fit-content;
         height: auto;
-        padding: 1em;
+        padding: max(1vw,2px);
         background: transparent;
         border: solid #d2d7dd 2px;
         border-radius: 2px;
         letter-spacing: 1px;
         color: #767879;
         transition: all 0.4s ease-in-out;
+        font-size: clamp(12px, calc(7px + 0.4vw), 16px);
+        text-transform:uppercase;
+
 
         &:hover {
           border-color: #30281e;
