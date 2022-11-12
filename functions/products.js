@@ -22,7 +22,6 @@ exports.handler = async (event)=>{
                if(product.error){
                    return (
                        {
-                           headers:{"Set-Cookie": " SameSite=none; secure"},
                            statusCode:404,
                            body:"omo! no product matching your description found"
                        }
@@ -37,8 +36,6 @@ exports.handler = async (event)=>{
 
             return (
                 {
-                    headers:{"Set-Cookie": " SameSite=none; secure"},
-
                     statusCode:200,
                     body:JSON.stringify({name,type:category[0],pictures,ratings,price,stock,color})
                 }
@@ -87,7 +84,6 @@ exports.handler = async (event)=>{
 
     return (
       {
-          headers:{"Set-Cookie": " SameSite=none; secure"},
           statusCode:200,
           body:JSON.stringify(products)
       }
@@ -99,7 +95,6 @@ exports.handler = async (event)=>{
         console.log(error,"error")
         return (
             {
-                headers:{"Set-Cookie": " SameSite=none; secure"},
                 statusCode:500,
                 body:"Omo an ERROR occured while loading, please check your connection "
             }
