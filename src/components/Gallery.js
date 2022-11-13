@@ -50,12 +50,12 @@ const Gallery = () => {
   useEffect(()=>{
 
     dispatch(galleryAction.sortProduct());
-// eslint-disable-next-line
+    // eslint-disable-next-line
   },[sortName])
   
   useEffect(()=>{
     dispatch(galleryAction.clearFilter())
-   
+    document.getElementById("vid")?.play();
     // eslint-disable-next-line
    },[])
   
@@ -74,7 +74,7 @@ const Gallery = () => {
        )
      }
 
-  if (loading) {
+  else if (loading) {
     console.log('loading')
 
     return (
@@ -86,14 +86,12 @@ const Gallery = () => {
     );
   }
 
-  if(!products  ){
+  else if(!products  ){
     console.log('prod')
 
     return <h1>sorry list is empty</h1>
   }
-  console.log('open')
-
-  return (
+  else{ return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -167,7 +165,8 @@ const Gallery = () => {
         </div>
       </section>
     </motion.div>
-  );
+  )
+};
 };
 
 export default Gallery;
