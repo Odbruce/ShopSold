@@ -55,7 +55,7 @@ const Gallery = () => {
   
   useEffect(()=>{
     dispatch(galleryAction.clearFilter())
-    document.getElementById("vid").play();
+   
     // eslint-disable-next-line
    },[])
   
