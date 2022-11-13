@@ -42,7 +42,7 @@ const ShopHome = () => {
     },
   };
   useEffect(()=>{
-    document.getElementById("vid").play();
+    document.getElementById("vid1").play();
 
   },[])
   const paste = cate==="men"?require("../Utilities/men_display1.mp4"):require("../Utilities/display_2.mp4");
@@ -60,7 +60,7 @@ const ShopHome = () => {
       >
         <div className="img-container">
          
-          <video id="vid"  autoPlay muted loop>
+          <video id="vid1"  autoPlay playsInline loop muted>
             {" "}
             <source type="video/mp4" src={paste} />
             your brower doesnt support html video

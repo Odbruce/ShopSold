@@ -55,6 +55,7 @@ const Gallery = () => {
   
   useEffect(()=>{
     dispatch(galleryAction.clearFilter())
+    document.getElementById("vid").play();
     // eslint-disable-next-line
    },[])
   
@@ -100,7 +101,7 @@ const Gallery = () => {
     >
       <div className="video-house">
         <div className="video">
-          <video id="vid" autoPlay muted loop>
+          <video id="vid" autoPlay playsinline loop muted>
             {" "}
             <source type="video/mp4" src={videoUrl} />
             your brower doesnt support html video

@@ -17,7 +17,7 @@ export const Navmodal = ({ name }) => {
   const womenCate = useSelector((state)=>{return state.productCate.women})
 
   let products = name === "men"?menCate:womenCate;
-  const vid = document.getElementById("vid1");
+  const vid = document.getElementById("vid2");
 
   // console.log(products[i].videoUrl);
 
@@ -76,7 +76,7 @@ export const Navmodal = ({ name }) => {
             })}
           </ul>
           <div className="nav_vid">
-          <video id="vid1" autoPlay muted loop>
+          <video id="vid2" autoPlay loop playsinline muted>
             <source type="video/mp4" src={products[i].videoUrl} />
             your brower doesnt support html video
           </video>
