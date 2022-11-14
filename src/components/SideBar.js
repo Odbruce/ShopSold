@@ -33,7 +33,7 @@ const SideBar = ({bar,setbar,women,men,enter,setEnter}) => {
     {  enter==="men"?men.map((item,index)=>{
       const {name,imageUrl,values:[obj]} = item;
         return <li key={index} >
-        <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${obj.type}"/"${name}`}>
+        <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${obj.type}/${name}`}>
           <p>{name}</p>
           <img src={imageUrl} alt={name} />
         </Link>
@@ -41,7 +41,7 @@ const SideBar = ({bar,setbar,women,men,enter,setEnter}) => {
       women.map((item,index)=>{
         const {name,imageUrl,values:[obj]} = item;
           return <li key={index}>
-          <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${obj.type}"/"${name}`}>
+          <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${obj.type}/${name}`}>
             <p>{name}</p>
             <img src={imageUrl} alt={name} />
           </Link>

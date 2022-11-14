@@ -170,7 +170,7 @@ console.log(favorite)
           <Link className="link" to={`/shop/${cate}`}>
             {cate}/
           </Link>
-          <Link className="link" to={`/products/${cate + "/" + type}`}>
+          <Link className="link" to={`/products/${cate}/${type}`}>
             {type}/
           </Link>
           <p className="paa">{name}</p>
