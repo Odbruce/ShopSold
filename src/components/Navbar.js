@@ -7,23 +7,27 @@ import { Navmodal } from "../Utilities/Navmodal";
 import { GrClose } from "react-icons/gr";
 import {MdOutlineAccountCircle,MdAccountCircle,MdOutlineLogout} from "react-icons/md"
 import { SearchModal } from "../Utilities/SearchModal";
-import { BsFacebook, BsInstagram, BsTwitter, BsSnapchat } from "react-icons/bs";
 import styled from "styled-components";
 import { useSelector,useDispatch } from "react-redux";
 import { useFireContext } from "./FirebaseContext";
 import { cartAction } from "../store";
+import SideBar from "./SideBar";
+
+
 
 const Navbar = () => {
   const matchome = useMatch("/");
  
   const matchshop = useMatch("/shop/*");
   const { cate } = useParams();
-  console.log(cate);
 
   const {User,logOut} = useFireContext();
 
-  console.log(User);
   const [navmodal, setnavmodal] = useState("men");
+  const [enter, setEnter] = useState("women");
+  const [bar, setbar] = useState(false);
+  const [isFocused, setIsfocused] = useState(false);
+
   const dispatch = useDispatch();
   const numberOfProducts = useSelector((state)=>state.cart.totalProducts)
   const cart = useSelector((state)=>state.cart.cart)
@@ -32,18 +36,17 @@ const Navbar = () => {
 
 
     
-    useEffect(()=>{
-    dispatch(cartAction.total());
-    localStorage.setItem("cart", JSON.stringify(cart));
+  useEffect(()=>{
+  dispatch(cartAction.total());
+  localStorage.setItem("cart", JSON.stringify(cart));
 
-    },[cart])
+  },[cart])
 
   const navfunc = (e) => {
-    const { top, bottom, left, width, height, right } =
+    const { top,left, width, height} =
       e.target.getBoundingClientRect();
     setnavmodal(e.target.textContent.toLowerCase());
     const modal = document.getElementById("navmodal");
-    const { height: modalheight } = modal.getBoundingClientRect();
     modal.style.top = `${top + height}px`;
     modal.style.left = `${left - 10 + width / 2}px`;
     modal.style.display = "flex";
@@ -56,9 +59,12 @@ const Navbar = () => {
     }
   };
 
-  const [enter, setEnter] = useState("women");
-  const [bar, setbar] = useState(false);
-  const [isFocused, setIsfocused] = useState(false);
+  
+
+
+  const sideBarProps = {enter,setEnter,bar,setbar,men,women}
+
+
 
   const closed = ()=>{
     const modal = document.getElementById("navmodal");
@@ -66,7 +72,6 @@ const Navbar = () => {
   }
 
   const scrollLog = () => {
-    console.log("ok...");
     const heading = document.getElementById("header");
     const nav = document.getElementById("nav_id");
     const move = document.getElementById("move_header")
@@ -74,7 +79,6 @@ const Navbar = () => {
     const scrollY = heading.getBoundingClientRect().top;
     const scrollYY = heading.getBoundingClientRect().bottom;
 
-    console.log(scrollY, window.pageYOffset);
     if (nav_bottom > scrollY) {
       heading.style.opacity = 0;
       console.log("hide");
@@ -85,7 +89,7 @@ const Navbar = () => {
     }
   };
 
-  console.log(matchshop)
+  
      window.onscroll = matchshop?scrollLog:null;
 
 
@@ -94,6 +98,8 @@ const Navbar = () => {
   return (
     <>
       {<Navmodal name={navmodal} />}
+      {isFocused && <SearchModal Focused={{isFocused,setIsfocused}} />}
+
 
       <div id="discount" className="product-heading">
         <div className="discount">
@@ -112,88 +118,13 @@ const Navbar = () => {
           </button>
         </div>
       </div>
-      <NavWrapper
-        initial={{ x: "-100%" }}
-        animate={{ x: bar ? 0 : "-100%"}}
-        transition={{
-          duration: 0.4,
-          type: "tween",
-          ease: [0.6,0.01,-0.05,0.95],
-        }}
-      >
-        <div className="header">
-          <button
-          name="women"
-            onClick={(e) => {
-              return setEnter(e.target.name)
-            }}
-          >
-            women {enter==="women" && <span></span>}
-          </button>
-
-          <button
-          name="men"
-            onClick={(e) => {
-              return setEnter(e.target.name)
-            }}
-          >
-            men {enter==="men" && <span></span>}
-          </button>
-        </div>
-        <ul className="ul_nav">
-        {  enter==="men"?men.map((item,index)=>{
-          const {name,imageUrl,values:[obj]} = item;
-          console.log(obj.type)
-            return <li key={index} >
-            <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${obj.type + "/" + name}`}>
-
-              <p>{name}</p>
-              <img src={imageUrl} alt={name} />
-            </Link>
-          </li>}):
-          women.map((item,index)=>{
-            const {name,imageUrl,values:[obj]} = item;
-            console.log(obj.type)
-              return <li key={index}>
-              <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${obj.type + "/" + name}`}>
-  
-                <p>{name}</p>
-                <img src={imageUrl} alt={name} />
-              </Link>
-            </li>})
-          }
-        </ul>
-
-        <ul className="footer">
-          <li>
-            <BsFacebook />
-          </li>
-          <li>
-            <BsInstagram />
-          </li>
-          <li>
-            <BsTwitter />
-          </li>
-          <li>
-            <BsSnapchat />
-          </li>
-        </ul>
-        <div
-          onClick={(e) => {
-            document.body.style.overflow = "initial";
-              return setbar(false);
-
-            
-          }}
-          className={bar?"nav_wrap blur_active":"nav_wrap"}
-        ></div>
-      </NavWrapper>
+      <SideBar {...sideBarProps}/>
       <Wrapper
         onMouseOver={closeSubmenu}
         animate={{ opacity: !matchome ? 1 : 0 }}
         id="nav_id"
       >
-        {isFocused && <SearchModal Focused={{isFocused,setIsfocused}} />}
+        {/* {isFocused && <SearchModal Focused={{isFocused,setIsfocused}} />} */}
           
         <div
           onClick={() => {
@@ -203,8 +134,6 @@ const Navbar = () => {
           }}
           className="bars"
         >
-          <div className={`${bar ? "bar_active" : ""}`}></div>
-          <div className={`${bar ? "bar_active" : ""}`}></div>
           <div className={`${bar ? "bar_active" : ""}`}></div>
         </div>
 
@@ -246,7 +175,6 @@ const Navbar = () => {
         </div>
         <ul className="ul">
           <button className={isFocused ? "active search" : "search"}>
-            {/* <div className="drop_display"></div> */}
             <GrClose className="close_me" />
             <div className="search_icon">
               <BsSearch onClick={() => {
@@ -298,121 +226,6 @@ const Navbar = () => {
 
 export default Navbar;
 
-const NavWrapper = styled(motion.nav)`
-  position: fixed;
-  top: 0;
-  width: 320px;
-  height: 100vh;
-  background: whitesmoke;
-  box-sizing: border-box;
-  z-index: 7;
-  transform: translateX(-150%);
-  transition: 0.2s ease-in-out transform;
-
-  @media (min-width: 780px) {
-    display: none;
-  }
-
-  .nav_wrap {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    transition: 0.6s ease all;
-    opacity:0
-  }
-
-  .blur_active {
-    backdrop-filter: blur(3px);
-    opacity:1;
-    z-index: -1;
-    width: 100vw;
-  }
-
-  .header {
-    display: flex;
-    gap: 0.2rem;
-    margin-bottom: 0.6rem;
-
-    button {
-      width: 100%;
-      height: 48px;
-      border: none;
-      cursor: pointer;
-      position: relative;
-      border-bottom: solid 1px transparent;
-      text-transform: uppercase;
-      transition: 0.4s ease all;
-
-      span {
-        position: absolute;
-        width: 100%;
-        left: 0;
-        bottom: 0;
-        height: 2px;
-        background: #db9836;
-      }
-    }
-    .btn_active {
-      border-bottom: solid 2px #db9836;
-    }
-  }
-
-  .ul_nav {
-    display: grid;
-    box-sizing: border-box;
-    padding: 0.2rem 0.4rem;
-    height: calc(100vh - 130px);
-    overflow: auto;
-    scrollbar-width: none;
-    // gap: 1rem;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    li {
-      height: fit-content;
-
-      .link_nav {
-        display: flex;
-        background: grey;
-        background: #bbb8b0;
-        justify-content: space-between;
-        align-items: center;
-        padding-left: 0.4rem;
-        text-decoration: none;
-        color: whitesmoke;
-        img {
-          width: 80px;
-          height: 80px;
-          background: #94a48e;
-          object-fit:cover;
-        }
-        p {
-          font-size: 14px;
-          text-transform:uppercase;
-          width: 200px;
-          color:#272727;
-          font-weight:500;
-          letter-spacing:1px;
-        }
-      }
-    }
-  }
-  .footer {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    padding: 0.4rem;
-    position: absolute;
-    height: 50px;
-    // margin-bottom: 1rem;
-    bottom: 0;
-    width: 100%;
-    background: #94a48e;
-  }
-`;
-
 const Wrapper = styled(motion.section)`
   height: clamp(50px, 5vw, 72px);
   margin: 0 auto;
@@ -447,20 +260,42 @@ const Wrapper = styled(motion.section)`
         width: 100%;
         transition: all ease-in-out 0.7s;
         background: #79b0b0;
+        position:relative;
+
+        &::before{
+          content:"";
+          position:absolute;
+          bottom:6px;
+          height: 0.104rem;
+          width: 100%;
+          transition: all ease-in-out 0.7s;
+          background: #79b0b0;
+        }
+        &::after{
+          content:"";
+          position:absolute;
+          top:6px;
+          height: 0.104rem;
+          width: 100%;
+          transition: all ease-in-out 0.7s;
+          background: #79b0b0;
+        }
       }
 
       .bar_active {
-        &:nth-of-type(1) {
+        transform:rotate(720deg);
+        
+        
+        &::before{
+          opacity:0;
           transform: translateY(0.45rem) rotate(45deg);
+
         }
 
-        &:nth-of-type(2) {
-          transform: translateX(-100%);
-          opacity: 0;
-        }
+        &::after{
+          transform: translateY(-0.45rem) rotate(-70deg);
+          transition-delay:0.2s
 
-        &:nth-of-type(3) {
-          transform: translateY(-0.45rem) rotate(-45deg);
         }
       }
     }

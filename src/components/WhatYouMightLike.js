@@ -117,9 +117,6 @@ const Wrapper = styled.section`
     -ms-overflow-style: none;
     overflow: auto;
     scrollbar-width: none;    
-    // border:1px solid black;
-    // border-top:solid black 1px;
-    // border-bottom:solid 1px black;
     height:max-content;
     gap:2vw;
 

@@ -55,9 +55,11 @@ const Gallery = () => {
   
   useEffect(()=>{
     dispatch(galleryAction.clearFilter())
-    document.getElementById("vid")?.play();
+    // document.getElementById("vid").play();
     // eslint-disable-next-line
    },[])
+
+ 
   
    
      if(errormsg){
@@ -85,12 +87,6 @@ const Gallery = () => {
       </div>
     );
   }
-
-  else if(!products  ){
-    console.log('prod')
-
-    return <h1>sorry list is empty</h1>
-  }
   else{ return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -99,7 +95,7 @@ const Gallery = () => {
     >
       <div className="video-house">
         <div className="video">
-          <video id="vid" autoPlay playsinline loop muted>
+          <video id="vid" autoPlay playsInline loop muted>
             {" "}
             <source type="video/mp4" src={videoUrl} />
             your brower doesnt support html video

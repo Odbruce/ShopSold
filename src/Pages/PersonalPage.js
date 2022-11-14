@@ -9,6 +9,8 @@ import { CartModal } from "../Utilities/CartModal";
 import { getProduct, productAction } from "../store";
 import { useSelector,useDispatch } from "react-redux";
 
+
+
 const PersonalPage = () => {
 
   const { cate, id } = useParams();
@@ -24,11 +26,21 @@ const PersonalPage = () => {
   console.log(id,"personal id")
   
   useEffect(() => {
-   
-   
+    
+    
     dispatch(getProduct({id,cate}))
   }, []);
   
+   
+  
+  const display = {
+    initial:{opacity:0},
+    animate:{opacity:1,
+     transition:{
+       duration:0.7,
+       type:"tween"
+     }}    
+   }
 
 
   if (loading) {
@@ -40,8 +52,7 @@ const PersonalPage = () => {
       </div>
     );
   }
-
-  if(errormsg){
+else if(errormsg){
     return (
       <div className="app_loading">
         <div className="load_head">
@@ -53,20 +64,7 @@ const PersonalPage = () => {
       </div>
     )
   }
-
-  
-
-  const display = {
-   initial:{opacity:0},
-   animate:{opacity:1,
-    transition:{
-      duration:0.7,
-      type:"tween"
-    }}
-    
-  }
-console.log(product,"personal")
-  return (
+else{ return (  
     <>
       <motion.section variants={display} initial="initial" animate="animate" className="wrapper" 
       >
@@ -76,7 +74,7 @@ console.log(product,"personal")
         <CartModal   />
       </motion.section>
     </>
-  );
+  )};
 };
 
 export default PersonalPage;

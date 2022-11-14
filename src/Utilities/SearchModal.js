@@ -61,7 +61,7 @@ export const SearchModal = ({ Focused }) => {
       {/* <button className="close_search">
         <GrClose onClick={closeSearch} />
       </button> */}
-      <button className={isFocused ? "active search stay" : "search stay"}>
+      <button className= "search" >
         <GrClose onClick={clearText} className="close_me" />
         <div className="search_icon ">
           <BsSearch />
@@ -85,8 +85,8 @@ export const SearchModal = ({ Focused }) => {
         ) : searched.length === 0 ? (
           <p>oops no match found</p>
         ) : (
-          searched.map((item, index) => {
-            const { products: name, id, cate, url, type } = item;
+          searched.map((item) => {
+            const { products: name, id,url, type } = item;
             return (
               <div
                 key={id}
@@ -146,11 +146,13 @@ const Wrapper = styled(motion.div)`
     position: relative;
     height: fit-content;
     // width: 10rem;
+    background:red;
+    background:transparent;
+    border:none;
     width: fit-content;
 
     .input_text {
       font-family: futura-pt, sans-serif;
-      background: transparent;
       width: 20rem;
       transition: 0.3s ease-in-out width;
       padding: 0.4rem 4rem 0.4rem 0.8rem;
@@ -179,7 +181,6 @@ const Wrapper = styled(motion.div)`
         font-family: futura-pt, sans-serif;
         font-size: 12px;
         letter-spacing: 1px;
-        // color: red;
       }
 
       @media (max-width: 780px) {
@@ -228,7 +229,12 @@ const Wrapper = styled(motion.div)`
     display: flex;
     flex-direction: column;
     gap: 3rem;
+    width:calc(250px + 1.5rem);
     align-items: center;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -ms-overflow-style: none;
     overflow: auto;
     scrollbar-width: none;
 
@@ -240,12 +246,14 @@ const Wrapper = styled(motion.div)`
       font-size:clamp(12px,calc(9px + 2vw),24px);  
     }
 
+    
+
     .search_product {
       display: grid;
       grid-template-columns: min-content 1fr;
       width: 250px;
       text-decoration: none;
-
+      
       .search_img {
         height: 50px;
         width: 50px;
@@ -255,7 +263,7 @@ const Wrapper = styled(motion.div)`
       }
       .search_name {
         width: 100%;
-        margin-left: 0.4rem;
+        // margin-left: 0.4rem;
         border-bottom: solid 1px whitesmoke;
         padding: 0 0.4rem;
         height: 50px;
