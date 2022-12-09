@@ -1,19 +1,12 @@
-import react from "react";
-import { useState, useEffect } from "react";
 import CartComponent from "../components/CartComponent";
 import Order from "../components/Order";
-// import Scroll from "../components/Scroll";
 import WhatYouMightLike from "../components/WhatYouMightLike";
 import { useSelector } from "react-redux";
-import { Advertise } from "../Utilities/styled";
 import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
+import AdvertNewsLetter from "../components/AdvertNewsLetter";
+import styled from "styled-components";
 
 const Cart = () => {
-  const [displayOpt, setdisplayOpt] = useState({
-    display: false,
-    prevScrollY: 0,
-  });
-  const { display, prevScrollY } = displayOpt;
 
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const totalProducts = useSelector((state) => state.cart.totalProducts);
@@ -22,29 +15,24 @@ const Cart = () => {
   const nav_cont = document.getElementById("nav_id");
 
   const scrollLog = () => {
+console.log(window.scrollY>=72);
+    window.scrollY>=72?document.getElementById("shadow").classList.add("shadow"):document.getElementById("shadow").classList.remove("shadow");
     if (window.scrollY > prevY) {
       nav_cont.style.top = "-72px";
-      console.log(prevY, window.scrollY);
-      // let scroll = window.pageYOffset;
-
-      //  setdisplayOpt({ display: true, prevScrollY: scroll })
+     
     } else {
-      console.log(prevY, window.scrollY);
-
-      // let scroll = window.pageYOffset;
-      // const nav_cont = document.getElementById("nav_id");
       nav_cont.style.top = "0";
-      // setdisplayOpt({ display: false, prevScrollY: scroll });
     }
 
     prevY = window.scrollY;
   };
   window.onscroll = scrollLog;
+
   return (
     <>
       <main>
-        <section className="section">
-          <div className="head">
+        <Wrapper  className="section">
+          <div id="shadow" className="head">
             <h2>Your Picks</h2>
             <div className="head-desc">
               <p id="border">
@@ -58,7 +46,7 @@ const Cart = () => {
             {totalProducts === 0 ? (
               <div className="empty_wrapper">
                 <p>you currently have no item in your bag</p>
-                <img src={require("../Utilities/empty_cart.png")} alt="" />
+                <img src={require("../Media/empty_cart.png")} alt="" />
               </div>
             ) : (
               <div className="cart_wrapper">
@@ -69,31 +57,101 @@ const Cart = () => {
           </section>
 
           <WhatYouMightLike />
-          <Advertise>
-            <h2>
-              New to <span>Shop</span>
-              <span>Sold</span> ? Sign up to enjoy 10% off your first order
-              (excluding sale styles).
-            </h2>
-            <form className="newletter">
-              <p>
-                Sign up to receive exclusive updates on our new collections and
-                special offers. To improve your experience we may; profile,
-                segment, test, analyse and model your details. You can
-                unsubscribe at any time via the link in your emails. Please
-                refer to our Privacy Policy for further details.
-              </p>
-              <input placeholder="newsletter" type="text" name="" id="" />
-            </form>
-          </Advertise>
-        </section>
+          <AdvertNewsLetter/>
+        </Wrapper>
       </main>
     </>
   );
 };
 
-// const Cart =()=>{
-//     return <h2>hello there</h2>
-// }
 
 export default Cart;
+
+
+
+const Wrapper = styled.section`
+
+
+.head{
+  min-width:200px;
+  position:sticky;
+  top:0;
+  background:whitesmoke;
+  z-index:2;
+  display:flex;
+  justify-content: flex-start;
+  gap:2rem;
+  padding:0.6em 10%;
+  transition:0.8s;
+  
+  @media(max-width:480px){
+    padding:0.6em 0.5em;
+  }
+
+  h2{
+    font-family: "Segoe UI", Roboto;
+    color:#30281e;
+    font-size:clamp(16px,calc(10px + 2vw),30px);
+  
+  }
+
+   .head-desc{
+    display:inherit;
+    align-items: flex-end;
+    
+    #border{
+      border-right:solid 1px;
+    }
+    
+    p{
+      height:fit-content;
+      padding:0 .8em ;
+      font-size:clamp(14px,calc(12px + 1vw),20px);
+      color:#30281e;
+    }
+  }
+}
+ .shadow{
+   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+ }
+
+ .cart{
+  position:relative;
+  background:var(--bg_pri);
+  box-sizing:border-box;
+  padding:1vw;
+
+  .cart_wrapper{
+    padding:2vw;
+    justify-items: center;
+    justify-content: center;
+    margin:0 auto;
+    display:grid;
+    background:whitesmoke;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap:5vw;
+  }
+
+  .empty_wrapper{
+    display: grid;
+    place-items:center;
+    padding:2vw;
+    margin:0 auto;
+    background:whitesmoke;
+    gap:2vw;
+
+    p{
+      font-size:clamp(12px,calc(7px + 0.6vw),16px);
+      color:grey;
+    }
+
+    img{
+      width:min(50%,400px);
+      object-fit: contain;
+      aspect-ratio: 1/1;
+    }
+
+  }
+}
+
+ `

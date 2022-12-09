@@ -54,6 +54,7 @@ export const CartModal = () => {
 
         {cart.map((item)=>{
           const {name,id,cate,price,image,quantity,color,size} = item;
+          console.log(image,color);
           return (
             <div key={id} className="cart_product">
               <div className="product_details">
@@ -63,6 +64,7 @@ export const CartModal = () => {
                 </div>
                 <div className="props">
                   <p>Size : {size}</p>
+                  <span style={{background:color}}></span>
                   <p>Quatity : {quantity}</p>
                 </div>
                 <button onClick={()=>{deleteCart(id)}} className="cursor deletebtn">REMOVE</button>
@@ -171,6 +173,19 @@ const Wrapper = styled(motion.div)`
           gap: 0.2vw;
           display: grid;
           letter-spacing: 1px;
+
+         span{
+            width: max(1.4vw, 10px);
+          height: max(1.4vw, 10px);
+          display:block;
+          }         
+          }
+
+          .deletebtn{
+            color:grey;
+            font-size:clamp(9px, calc(7px + 0.5vw), 16px);
+            padding:0.5vw;
+            width:fit-content;
           }
 
           .cursor {

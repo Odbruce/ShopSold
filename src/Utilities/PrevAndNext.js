@@ -7,6 +7,7 @@ import { GrPrevious, GrNext } from "react-icons/gr";
 import { Link } from 'react-router-dom';
 
 export const PrevAndNext = ({cate,type,id}) => {
+  console.log(cate);
 
   // const switch_product = useRef({minus:{id:""},plus:{id:""}});
   const [switch_product,setSwitch] = useState({minus:{id:""},plus:{id:""}});
@@ -34,20 +35,17 @@ export const PrevAndNext = ({cate,type,id}) => {
     function findId(item) {
       return item.id === id;
     }
+    
     const plus = items[`${previndex === items.length - 1 ? 0 : previndex + 1}`];
     const minus = items[`${previndex === 0 ? items.length - 1 : previndex - 1}`];
 
-  setSwitch({ plus, minus })
-    console.log(plus,minus);
-
-    return;
+    return  setSwitch({ plus, minus });
   };
 
   console.log(switch_product);
 
 
   useEffect(() => {
-    console.log("effect")
     const filtered = cateData.find((items) => {
       const { name } = items;
       if (type === "beach") {
@@ -55,54 +53,47 @@ export const PrevAndNext = ({cate,type,id}) => {
       }
       return name === type;
     });
-    console.log(filtered);
-
    getProduct(filtered.values, id);
 
   }, []);
-  console.log(switch_product.minus.id);
-
-
- 
-
-
 
 
   return (
     <Wrapper>
            <Prev prev={switch_product.minus} direction={direction} />
-            <Next next={switch_product.plus} direction={direction} /> 
+           <Next next={switch_product.plus} direction={direction} /> 
       
       <Link
-    to={`/productpersonal/${cate}/${switch_product.minus.id}`}
-    className="btn_contain"
-  >
-    <button>prev</button>
-    <GrPrevious
-      onMouseEnter={() => {
-        prevnext("prev");
-      }}
-      onMouseLeave={() => {
-        prevnext("leave");
-      }}
-      className="nav_icon"
-    />
-  </Link>
-  <Link
-    to={`/productpersonal/${cate}/${switch_product.plus.id}`}
-    className="btn_contain"
-  >
-    <button>next</button>
-    <GrNext
-      onMouseEnter={() => {
-        prevnext("next");
-      }}
-      onMouseLeave={() => {
-        prevnext("leave");
-      }}
-      className="nav_icon"
-    />
-  </Link> </Wrapper>
+          to={`/productpersonal/${cate}/${switch_product.minus.id}`}
+          className="btn_contain"
+      >
+          <button>prev</button>
+          <GrPrevious
+            onMouseEnter={() => {
+              prevnext("prev");
+            }}
+            onMouseLeave={() => {
+              prevnext("leave");
+            }}
+            className="nav_icon"
+          />
+      </Link>
+      <Link
+        to={`/productpersonal/${cate}/${switch_product.plus.id}`}
+        className="btn_contain"
+      >
+            <button>next</button>
+            <GrNext
+              onMouseEnter={() => {
+                prevnext("next");
+              }}
+              onMouseLeave={() => {
+                prevnext("leave");
+              }}
+              className="nav_icon"
+            />
+      </Link>
+   </Wrapper>
   )
 }
 

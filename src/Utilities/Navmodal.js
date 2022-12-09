@@ -1,8 +1,5 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { GrClose } from "react-icons/gr";
 import { Link } from "react-router-dom";
-
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
@@ -10,8 +7,6 @@ import { useSelector } from "react-redux";
 
 
 export const Navmodal = ({ name }) => {
-  // const [products, setProducts] = useState([]);
-  const [isloading, setisLoading] = useState(false);
   const [i, setindex] = useState(0);
   const menCate = useSelector((state)=>{return state.productCate.men});
   const womenCate = useSelector((state)=>{return state.productCate.women})
@@ -19,19 +14,21 @@ export const Navmodal = ({ name }) => {
   let products = name === "men"?menCate:womenCate;
   const vid = document.getElementById("vid2");
 
-  // console.log(products[i].videoUrl);
 
   useEffect(()=>{
     setindex(0);
        if(vid){
         return vid.src=products[0].videoUrl
       };
-  },[name])
+  },[name,products,vid])
 
 
   const onHovered=(num)=>{
     setindex(num);
-    vid.src=products[num].videoUrl;
+    if(vid.src !== products[num].videoUrl){
+      return vid.src=products[num].videoUrl;
+    }
+    return;
   }
  
 
@@ -52,10 +49,10 @@ export const Navmodal = ({ name }) => {
         <div className="modal_picks">
           <ul>
             {products.map((items, index) => {
-              const { name: cate, videoUrl } = items;
-              console.log(items, index);
+              const { name: cate} = items;
 
-              return (
+              if(cate!=="suit yourself"){
+                return (
                 <li
                   className={`${i === index ? "active" : ""}`}
                   onMouseOver={() => { onHovered(index);
@@ -72,14 +69,14 @@ export const Navmodal = ({ name }) => {
                     {cate}
                   </Link>
                 </li>
-              );
+              )}else {return null};
             })}
           </ul>
           <div className="nav_vid">
-          <video id="vid2" autoPlay loop playsinline muted>
-            <source type="video/mp4" src={products[i].videoUrl} />
-            your brower doesnt support html video
-          </video>
+            <video id="vid2" autoPlay loop playsInline muted>
+              <source type="video/mp4"  src={products[i].videoUrl} />
+              your brower doesnt support html video
+            </video>
           </div>
         </div>
       </motion.div>
@@ -100,10 +97,11 @@ const Wrapper = styled(motion.div)`
   top: 12rem;
   left: 5rem;
   display: none;
-  z-index: 200;
-  width: 50vw;
+  z-index: 5;
   height: 325px;
   width: 650px;
+  border-radius:10px;
+  border-top-left-radius:0;
 
   &::after {
     content: "";
@@ -138,11 +136,10 @@ const Wrapper = styled(motion.div)`
       &::after {
         height: 2px;
         width: 60%;
-        background: #db9836;
+        background: var(--bg_org);
         bottom: 0;
         right: 0;
         left: 0;
-        // transform: translateX(-50%);
         position: absolute;
         content: "";
       }
@@ -151,10 +148,8 @@ const Wrapper = styled(motion.div)`
     .modal_picks {
       display: flex;
       justify-content: space-between;
-      // background: orange;
 
       ul {
-        // background: blue;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -164,6 +159,8 @@ const Wrapper = styled(motion.div)`
           letter-spacing: 1px;
           text-transform: capitalize;
           color: black;
+
+        
 
           .linked {
             display: block;
@@ -186,11 +183,11 @@ const Wrapper = styled(motion.div)`
         }
         .active {
           .linked {
-            color: #db9836;
+            color: var(--bg_org);
           }
 
           span {
-            border-left: 2px solid #db9836;
+            border-left: 2px solid var(--bg_org);
             background: rgb(0, 0, 0, 0.1);
             transform: scaleY(1);
             width: 100%;
@@ -208,7 +205,9 @@ const Wrapper = styled(motion.div)`
           height: 100%;
           object-fit: cover;
           object-position: 20% 70%;
+          transition:0.5s;
         }
+        
       }
     }
   }

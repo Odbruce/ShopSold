@@ -1,25 +1,22 @@
-import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { BsChevronCompactDown } from "react-icons/bs";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { motion } from "framer-motion";
-// import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
 import { useDispatch,useSelector } from "react-redux";
-import { productAction,cartAction} from "../store";
+import {cartAction} from "../store";
 import { getUniqueValue } from "../Utilities/getUniqueValue";
 import { Link } from "react-router-dom";
 import { QuantityButton } from "../Utilities/QuantityButton";
-
+import { useFireContext } from "./FirebaseContext";
 
 
 export const WishProduct = ({wishProp}) => {
 
   const dispatch = useDispatch();
 
-  const {name,id,color,price,image,cate,stock,type} = wishProp;
+  const {name,id,color,price,image,cate,stock,delId,type} = wishProp;
 
   const [cartProp,setcartProp] = useState({color:"",size:"",qty:1});
   const [errormsg, setErrormsg] = useState([]);
@@ -28,8 +25,23 @@ export const WishProduct = ({wishProp}) => {
   const sizes = getUniqueValue(allproducts, "size", true);
   const {color:selectedColor,size,qty} = cartProp;
 
+  const {del} = useFireContext();
+
 
   const updateCart = () => {
+
+    if (!selectedColor || !size) {
+      let msg = [];
+
+      if (!selectedColor) {
+        msg[0] = "please select a color";
+      }
+      if (!size) {
+        msg[1] = "please select a size";
+      }
+
+      return setErrormsg(msg);
+    }
 
     dispatch(
       cartAction.updateCart({
@@ -52,7 +64,8 @@ export const WishProduct = ({wishProp}) => {
   const [display, setDisplay] = useState(false);
 
   const deleteWish = ()=>{
-    dispatch(productAction.deleteWish(id));
+    // dispatch(productAction.deleteWish(id));
+    del(delId)
   }
 
   
@@ -107,25 +120,25 @@ export const WishProduct = ({wishProp}) => {
         <img className="img" src={image} alt="" />
       </div>
         {
-        <motion.div
-          initial={{ height: "0px", opacity: 0 }}
+        <motion.button
+          initial={{ height: "0px", opacity:0}}
           animate={{
             height: display ? `calc(2vw + 16px)` : "0px",
-            opacity: display ? 1 : 0,
+            opacity:display?1:0,
           }}
           transition={{
             type: "tween",
             ease: [0.6, 0.15, 0.59, 0.9],
             duration: 0.2,
           }}
-          className={selectedColor && size && stockLeft()!== 0 ? "contain add":"contain"}
-          disabled={selectedColor && size && stockLeft()!== 0 ? false : true}
+          className={selectedColor && size && stockLeft() ? "contain add":"contain"}
+          // disabled={!(selectedColor && size && stockLeft())}
           onClick={updateCart}
 
         >
-          <h2>{priceToLocaleCurrrency(price)}</h2>
+          <p>{priceToLocaleCurrrency(price)}</p>
           <p>add to cart</p>
-        </motion.div>
+        </motion.button>
       }
 
       <div className="header">
@@ -239,17 +252,10 @@ const Wrapper = styled.section`
     }
 
     img {
-      // max-width:300px;
-      height: 307px;
       height: clamp(250px, 36vw, 307px);
-      // height:21.3vw;
-      // min-height:250px;
       object-fit: cover;
-      width: 20.8vw;
       width: 100%;
-
       background: #c2ccbe;
-      margin-bottom: 1em;
     }
 
     &:hover .H{
@@ -262,9 +268,7 @@ const Wrapper = styled.section`
     color: black;
     justify-content: space-between;
     border: 2px solid grey;
-    color: grey;
     width: 100%;
-    // padding: 1vw 0.5rem;
     padding: 0 0.5rem;
     text-transform: uppercase;
     align-items: center;
@@ -273,22 +277,25 @@ const Wrapper = styled.section`
     overflow: hidden;
     transition: border 0.4s ease-in-out;
     font-size: clamp(10px, calc(7px + 0.6vw), 15px);
+    font-family:"Segoe UI";
     font-weight:600;
     cursor: pointer;
-
-    h2{
-      font-size: clamp(11px, calc(7px + 0.6vw), 16px);
+        
+    p{
+      font-size:clamp(9px, calc(7px + 0.5vw), 16px);
+      whitespace:no-wrap;
+      color: grey;
     }
   }
   .add{
-    border:2px solid #272727;
-    h2{
-      color:green
-    }
+    border:2px solid var(--font_pri);
+    
     p{
-      color:#272727;
-    }
-
+      color:green;
+      &:nth-of-type(2){
+        color:var(--font_pri);
+      }
+    }    
   }
   .props {
     transition: 1s ease;
@@ -296,29 +303,27 @@ const Wrapper = styled.section`
     transform: translateY(-200%);
     transform: translateY(0);
     height: 0;
-    // background: red;
 
     .prop {
-      //   width: 100%;
       padding: 0.8vw 0.5rem;
       display: flex;
       justify-content: space-between;
       border-bottom: 1px solid grey;
+      position:relative;
 
       .sizes {
         width: 7rem;
         display: flex;
         justify-content: space-between;
-        position:relative;
         gap: 0.5vw;
-
+        
         .errormsg{
           position:absolute;
           width:7rem;
-          bottom:-25%;
-          font-size:8px;
+          bottom:0;
+          font-size:7px;
           color:red;
-          text-align:end;
+          text-align:center;
         }
 
         button {
@@ -332,6 +337,7 @@ const Wrapper = styled.section`
           color: grey;
           transition: border 0.4s ease-in-out;
           cursor: pointer;
+          font-size:clamp(9px, calc(7px + 0.5vw), 16px)
 
         }
         .active {
@@ -342,23 +348,21 @@ const Wrapper = styled.section`
       }
       .color {
         display: flex;
+        align-self:center;
         gap: 0.5vw;
-        position:relative;
 
 
         .errormsg{
           position:absolute;
           width:7rem;
-          bottom:-50%;
-          right:0%;
-          font-size:8px;
+          font-size:7px;
+          bottom:0px;
           color:red;
+          right:0;
           text-align:end;
         }
 
         .span {
-          width: 1.2rem;
-          height: 1.2rem;
           width: max(1.4vw, 10px);
           height: max(1.4vw, 10px);
           border: solid 2px transparent;

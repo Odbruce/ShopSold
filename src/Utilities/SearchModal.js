@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 
 export const SearchModal = ({ Focused }) => {
-  const { isFocused, setIsfocused } = Focused;
+  const {setIsfocused } = Focused;
 
   const dispatch = useDispatch();
   
@@ -17,7 +17,6 @@ export const SearchModal = ({ Focused }) => {
     return state.productCate.filter;
   });
 
-  console.log(searched);
 
   const search = (e) => {
     const { name, value } = e.target;
@@ -27,12 +26,10 @@ export const SearchModal = ({ Focused }) => {
   };
 
   const clearText = () => {
-    console.log("clear")
     document.getElementById("input").focus();
     return dispatch(productAction.clearText());
   };
-  const closeSearch = (e) => {
-
+  const closeSearch = () => {
       setIsfocused(false);
       document.body.style.overflow = "initial";
 
@@ -55,12 +52,9 @@ export const SearchModal = ({ Focused }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="search_shade"
-      // onClick={closeSearch}
     >
       <div onClick={closeSearch} className="cover"></div>
-      {/* <button className="close_search">
-        <GrClose onClick={closeSearch} />
-      </button> */}
+    
       <button className= "search" >
         <GrClose onClick={clearText} className="close_me" />
         <div className="search_icon ">
@@ -87,6 +81,7 @@ export const SearchModal = ({ Focused }) => {
         ) : (
           searched.map((item) => {
             const { products: name, id,url, type } = item;
+            console.log(type)
             return (
               <div
                 key={id}
@@ -125,7 +120,8 @@ const Wrapper = styled(motion.div)`
   height: 100vh;
   padding: 2vw 2vw 2vw 2vw;
   display: grid;
-  // place-content: center;
+  grid-template-rows:min-content 1fr;
+  gap:2rem;
   justify-items: center;
 
   .cover {
@@ -144,8 +140,8 @@ const Wrapper = styled(motion.div)`
 
   .search {
     position: relative;
+    margin-top:3rem;
     height: fit-content;
-    // width: 10rem;
     background:red;
     background:transparent;
     border:none;
@@ -194,27 +190,28 @@ const Wrapper = styled(motion.div)`
 
     .close_me {
       position: absolute;
-      // font-size: clamp(0.5rem, calc(1.3vw + 3px), 1rem);
       font-size: 0.9rem;
-      z-index: 6;
-      opacity: 1;
-      right: 2.1rem;
-      top: 25%;
+      z-index: 2;
+      right: 2.2rem;
+      top:0;
+      bottom:0;
+      margin:auto 0;
     }
     .search_icon {
       right: 0;
-      // top:25%;
-      z-index: 10;
+      z-index: 2;
       position: absolute;
-      // font-size: clamp(0.5rem, calc(1.3vw + 3px), 1rem);
       font-size: 0.9rem;
       width: 2rem;
-      height: 2rem;
+      height:100%;
       display: grid;
       place-items: center;
       color: #30281e;
       background: #0770cf;
-      border-radius: 50%;
+      border-top-left-radius: 1rem 50%;
+      border-bottom-left-radius: 1rem 50%;
+      border-top-right-radius: 1rem 50%;
+      border-bottom-right-radius: 1rem 50%;
     }
   }
 
@@ -224,7 +221,9 @@ const Wrapper = styled(motion.div)`
   }
 
   .search_products {
-    height: 70vh;
+    height:fit-content;
+    max-height:70vh;
+    padding:1vw 0;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -268,7 +267,7 @@ const Wrapper = styled(motion.div)`
         padding: 0 0.4rem;
         height: 50px;
         color: black;
-        color: #db9836;
+        color: var(--bg_org);
         text-transform: capitalize;
         font-weight: 500;
         letter-spacing: 1px;

@@ -1,36 +1,28 @@
 import React from "react";
 import styled from "styled-components";
-import { Next } from "../Utilities/Next";
-import { Prev } from "../Utilities/Prev";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { ProductNavDisplay } from "./ProductNavDisplay";
 import { Stars } from "../Utilities/Stars";
-import {
-  FaAngleLeft,
-  FaAngleUp,
-  FaAngleRight,
-  FaHeart,
-  FaRegHeart,
-} from "react-icons/fa";
-import { ImStarFull, ImStarHalf, ImStarEmpty } from "react-icons/im";
-import { GrPrevious, GrNext } from "react-icons/gr";
+import {FaAngleLeft} from "react-icons/fa";
 import { RiShoppingBag3Fill } from "react-icons/ri";
-import { Link, useMatch, useParams } from "react-router-dom";
-import { arrange } from "../Utilities/arrange";
+import { Link, useMatch} from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { cartAction, productAction } from "../store";
 import { getUniqueValue } from "../Utilities/getUniqueValue";
 import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
 import { PrevAndNext } from "../Utilities/PrevAndNext";
 import { QuantityButton } from "../Utilities/QuantityButton";
-import Heart from "./Heart";
+import Heart from "../Utilities/Heart";
+
 
 const IndividualProductComponent = ({ pictures, name, color, price, ratings, stock, type, cate,  id }) => {
 
-  const {savedProducts:favourite,allProducts:allproducts} = useSelector((state) => state.productCate);
+  const allproducts = useSelector((state) => state.productCate.allProducts);
 
   const [errormsg, setErrormsg] = useState([]);
+
+  const [idx,setIdx] = useState(0);
 
   const [displayColor, setdisplayColor] = useState(false);
  
@@ -45,7 +37,6 @@ const IndividualProductComponent = ({ pictures, name, color, price, ratings, sto
   const dispatch = useDispatch();
   
   const {color:selectedColor,size,qty} = cartProp;
-
  
 
   const stockLeft = () => {
@@ -87,19 +78,27 @@ const IndividualProductComponent = ({ pictures, name, color, price, ratings, sto
     setcartProp({...cartProp,[name]:prop})
   };
 
-
-console.log(price)  
-console.log(favorite)
   useEffect(()=>{
-    console.log(price)
-    console.log(favorite)
     dispatch(
       productAction.addToRecentlyViewed({...favorite})
     );
-    
+    // eslint-disable-next-line
   },[])
 
   const updateCart = () => {
+
+    if (!selectedColor || !size) {
+      let msg = [];
+
+      if (!selectedColor) {
+        msg[0] = "please select a color";
+      }
+      if (!size) {
+        msg[1] = "please select a size";
+      }
+
+      return setErrormsg(msg);
+    }
 
     dispatch(
       cartAction.updateCart({
@@ -187,20 +186,21 @@ console.log(favorite)
               return (
                 <img
                   key={index}
-                  className={`${index === 1 ? "" : "inactive"}`}
+                  className={`${index === idx ? "" : "inactive"}`}
                   src={url}
                   alt={name}
+                  onClick={()=>setIdx(index)}
                 />
               );
             })}
           </div>
           <div className="main_img">
-            <img src={pictures["1"].url} alt="" />
+            <img src={pictures[idx].url} alt="" />
           </div>
         </div>
-        <section className="product_props">
+        <section id="prod_header" className="product_props">
           <div className="prop_contain">
-            <div className="prop_head">
+            <div   className="prop_head">
               <h2>{name}</h2>
               <div>
                 <h3 className="h3">{priceToLocaleCurrrency(price)}</h3>
@@ -292,16 +292,12 @@ console.log(favorite)
               className={
                 selectedColor && size ? "add_cart" : "add_cart inactive"
               }
-              disabled={selectedColor && size && stockLeft()!== 0 ? false : true}
             >
-              ADD TO CART{" "}
+              ADD TO CART
               <span>
                 <RiShoppingBag3Fill />
               </span>
             </button>
-            {/* <div onClick={addToFavourite} className="wishlist">
-              {isIt ? <FaHeart /> : <FaRegHeart />}
-            </div> */}
             <Heart {...favorite} />
           </div>
         </section>
@@ -411,8 +407,6 @@ const Wrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
     gap: 2rem;
-    background: rgb(148, 164, 142, 0.4);
-    background: #e9e9e9;
     background: #f6f5f3;
 
     .img {
@@ -465,7 +459,6 @@ const Wrapper = styled.div`
 
           h2 {
             font-family: "poppins", sans-serif;
-            font-size: 1.7rem;
             font-size: clamp(20px, calc(2vw + 9px), 32px);
             letter-spacing: 2.5px;
             font-weight: 400;
@@ -552,7 +545,6 @@ const Wrapper = styled.div`
               gap: 0.6rem;
               position: absolute;
               transform-origin:right bottom;
-              // top:-180%;
               transition:0.3s all ease-in-out;
               right:40%;
           
@@ -562,20 +554,6 @@ const Wrapper = styled.div`
                 height: max(1.3vw,13px);
                 border:solid 2px transparent;
                 transition: border 0.4s ease-in-out;
-
-          
-                &:nth-of-type(1) {
-                  background: red;
-                }
-                &:nth-of-type(2) {
-                  background: blue;
-                }
-                &:nth-of-type(3) {
-                  background: green;
-                }
-                &:nth-of-type(4) {
-                  background: #242424;
-                }
               }
               .active{
                 border-color:white;
@@ -606,8 +584,7 @@ const Wrapper = styled.div`
             display: flex;
             justify-content: space-between;
             position:relative;
-
-          
+         
               .errormsg{
                 position:absolute;
                 bottom:-8px;
@@ -619,7 +596,6 @@ const Wrapper = styled.div`
               }
 
             .span {
-              // padding: 0.2vw 0.4vw;
               width:22px;
               height:22px;
               display: flex;
@@ -643,13 +619,11 @@ const Wrapper = styled.div`
           }
 
           h3 {
-            font-size: 1rem;
             font-size: max(12px, calc(7px + 0.6vw));
             letter-spacing: 1px;
             font-weight: 500;
 
             span {
-              font-size: 1rem;
               font-size: max(12px, calc(7px + 0.6vw));
               font-weight: 400;
             }
@@ -657,9 +631,7 @@ const Wrapper = styled.div`
         }
         .add_cart {
           position: relative;
-          font-family: AdihausDIN, Helvetica, Arial, sans-serif;
-          font-size: 1.2rem;
-          font-size: max(12px, calc(7px + 0.6vw));
+          font-family: Arial, sans-serif;
           font-size: clamp(12px, calc(9.6px + 0.667vw), 1.2rem);
           font-weight: 600;
           color: white;
@@ -667,7 +639,6 @@ const Wrapper = styled.div`
           width: 100%;
           cursor: pointer;
           padding: 0.8rem;
-          background: #453f39;
           background: #353b43;
           border: none;
           border-radius: 5px;
@@ -678,7 +649,7 @@ const Wrapper = styled.div`
 
           span {
             font-size: 1.5rem;
-          font-size: clamp(15px, calc(9.6px + 0.7vw), 1.4rem);
+            font-size: clamp(15px, calc(9.6px + 0.7vw), 1.4rem);
           }
         }
 
@@ -697,7 +668,6 @@ const Wrapper = styled.div`
   }
   .product_info {
     background: #f6f5f3;
-    // padding-top:4vw;
 
     h2 {
       padding: 1.77vh 7.5vw 0;
@@ -707,10 +677,7 @@ const Wrapper = styled.div`
     .product_info_contain {
       width: 85vw;
       display: grid;
-      font-size: min(12, calc(0.39rem + 1.2vw));
       font-size: clamp(12px, calc(7px + 0.6vw), 16px);
-
-      // font-weight:300;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       margin: 0 auto;
       padding: 3.55vh 0;

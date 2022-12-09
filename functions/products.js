@@ -7,7 +7,7 @@ exports.handler = async (event)=>{
     
     let tables = event.queryStringParameters.cate==="men" ?"men":"women";
 
-    console.log(event.queryStringParameters.cate);
+    
     
     const airtable = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY })
       .base('appcraBS6DJKAua0l')
@@ -27,6 +27,7 @@ exports.handler = async (event)=>{
                        }
                    )
                }
+
 
             const {images,ratings,price,stock,category,color,products:name} = product.fields;
             const pictures = images.map((image)=>{
@@ -55,7 +56,7 @@ exports.handler = async (event)=>{
         const {records} = await airtable.list({
         maxRecords: 2000,
         })
-        console.log(records,"records")
+        
 
         const products =    
             records.filter((product)=>{
@@ -92,7 +93,7 @@ exports.handler = async (event)=>{
   }
     
       catch(error){
-        console.log(error,"error")
+        
         return (
             {
                 statusCode:500,

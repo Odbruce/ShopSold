@@ -1,49 +1,21 @@
 import styled from "styled-components";
-import { Link, useMatch, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { Link,  useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useEffect, useState,useRef } from "react";
-import Heart from "./Heart";
+import { useEffect, useState} from "react";
+import Heart from "../Utilities/Heart";
+
+
 
 
 const WhatYouMightLike = () => {
-  const matchshop = useMatch("/shop");
-  const param = useParams().cate;
-  console.log(param)
-  const prop = param?param:"allProducts";
-  console.log(prop);
-  const cate = useSelector((state) => state.productCate[prop]);
-  console.log(cate);
-  const cateArray = param?cate.map((item) => item.values).flat():cate;
-  console.log(cateArray)
-
-  const [productsArray, setproductsArray] = useState([]);
-
-
-
-
-  // const filtered = values.filter((items) => {
-  //   // const { id } = items;
-  //   return items.id === id;
-  // });
-
-  // console.log(filtered);
-
-  // const {
-  //   // url,
-  //   images,
-  //   // id,
-  //   stock,
-  //   type,
-  //   color,
-  //   // price,
-  //   ratings,
-  //   // products: name,
-  // } = filtered[0];
 
   
+  const param = useParams().cate;
+  const prop = !!param?param:"allProducts";
+  const cate = useSelector((state) => state.productCate[prop]);
+  const cateArray = !!param?cate?.map((item) => item.values).flat():cate;
+  const [productsArray, setproductsArray] = useState([]);
 
- 
   
   useEffect(() => {
     const indexArray = (count, max) => {
@@ -62,7 +34,6 @@ const WhatYouMightLike = () => {
       );
     }, []);
     
-    console.log(productsArray);
 
   return (
     <Wrapper className="cover">
@@ -70,11 +41,10 @@ const WhatYouMightLike = () => {
       <ul className="WhatYouMightLike">
         {productsArray.map((item) => {
           const { products: name, images,id,type,cate,color,price,ratings,stock,} = item;
-          console.log(images[0],type);
-          let favorite = {images,cate,name,color,price,ratings,stock,type,id,}
+          let favorite = {image:images[0],cate,name,color,price,ratings,stock,type,id,}
 
           return (
-            <div  key={id} className="wed ">
+            <li  key={id} className="wed ">
                 <Heart {...favorite} />
                 <Link to={`/productpersonal/${type}/${id}`}>
                   <img src={images["0"]} alt={name} />
@@ -82,10 +52,9 @@ const WhatYouMightLike = () => {
                     <h4>{name}</h4>
                   </div>
                 </Link>
-            </div >
+            </li >
           );
         })}
-       
       </ul>
     </Wrapper>
   );
@@ -99,22 +68,21 @@ const Wrapper = styled.section`
   margin: 1em auto 2rem;
 
   h2 {
-    font-size: clamp(1.2rem, calc(1.389vw + 4px), 1.6rem);
-    text-transform :uppercase;
+    font-size:clamp(12px,calc(8px + 2vw),24px);  
+    text-transform: uppercase;
   }
 
   .WhatYouMightLike {
     margin: 1em auto 0;
     position: relative;
-    width: min(75vw, 950px);
-    height: clamp(320px, 50vw, 450px);
+    width: min(95vw, 950px);
     display: grid;
     grid-auto-columns: 35%;
     grid-auto-flow: column;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
     -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
     overflow: auto;
     scrollbar-width: none;    
     height:max-content;
@@ -122,6 +90,7 @@ const Wrapper = styled.section`
 
     @media (max-width: 680px){
       width:350px;
+      gap:10px;
       grid-auto-columns:50%;
     }
 
@@ -129,68 +98,45 @@ const Wrapper = styled.section`
       display: none;
     }
 
-   
-  
-
-  .wed {
-    width: 350px;
-    width: min(30vw, 350px);
+ li {
     background: #94a48e;
-    // background:red;
     position: relative;
-    height: max(34.44vh, 400px);
-    transition: all ease-out 0.2s;
-    // padding: 0.3rem;
-    border:1px solid #272727;
-    // border-top:none;
-    // border-bottom:none;
+    border:1px solid var(--font_pri);
     height: clamp(200px, 50vw, 400px);
     scroll-snap-align: start;
     overflow:hidden;
-    text-decoration:none;
 
+    > div{
+      display:none;
+    }
 
     &:hover > div{
       display:initial;
     }
 
-    // &:first-of-type{
-    //   border-left:none;
-    // }
-    &:last-child{
-      border-right:solid 1px #272727;
-    }
+    
 
     @media (max-width: 680px){
       width:175px;
       scroll-snap-align: center;
     }
  
+    img {
+      width: 100%;
+      height:100%;
+      transition:ease-in-out 0.4s;
+      transition-property:transform;
+      object-fit: cover;
+    }
     &:hover img{
       transform:scale(1.07);
     }
 
-    > div{
-      display:none;
-    }
-    img {
-      width: 100%;
-      width: min(30vw, 350px);
-      width:100%;
-      // height: clamp(200px, 50vw, 400px);
-      height:100%;
-      transition: all ease-in-out 0.4s;
-      object-fit: cover;
-    }
     h4 {
       position: absolute;
-      font-size: calc(5px + 1vw);
-    font-size: clamp(0.7rem, calc(1.1vw + 4px), 1.3rem);
-
-      color: #e8ebee;
-      color: #272727;
+      font-size: clamp(9px,calc(10px + 0.5vw),16px);
+      color: var(--font_pri);
       text-transform:uppercase;
-      // padding: 0 0 0 5%;
       padding:2px 10px;
       bottom: 10%;
       text-align: start;

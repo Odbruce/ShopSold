@@ -62,7 +62,7 @@ export const QuantityButton = ({qty,setcartProp,stockLeft,selectedColor,size,set
                 <input
                   type="text"
                   name="quantity"
-                  className="qty_displace"
+                  className={`${size&&selectedColor?"qty_displace active":"qty_displace"}`}
                   disabled
                   value={qty}
                 />
@@ -87,6 +87,9 @@ width: 5rem;
   background:transparent;
   border:none;
   line-height: 1rem;
+}
+.active{
+  color:var(--font_pri);
 }
 
 button {

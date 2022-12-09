@@ -3,18 +3,6 @@
     padding:0;
     list-style:none;
 }
-#header{
-    /* letter-spacing: 2px;
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    position:relative;
-    bottom:clamp(4rem,13.9vw,5rem); */
-    /* clamp(2rem,10vw,5rem)
-    height:clamp(2rem,3.9vw,3rem); */
-
-  }
 
 .landing-write{
     display:flex;
@@ -22,8 +10,22 @@
     position: relative;
     gap:15vw;
     width:100%;
-    /* background:red; */
 }
+
+.cover_img{
+    position: absolute;
+    height:100%;
+    width:100%;
+    z-index:1;
+    object-fit:cover;
+    filter:brightness(50%);
+    opacity:1;
+    transition: 0.6s;
+  }
+  .null{
+    opacity:0;
+  }
+  
 .container{
     margin:0 auto;
     width:min(100vw,75rem);
@@ -35,20 +37,20 @@
     place-content: center;
 }
 .nav_container{
-   
     width:100vw;
     z-index: 4;
-     position: absolute;
-   min-height:100vh;
-   display: grid;
+    position: absolute;
+    min-height:100vh;
+    display: grid;
     justify-content: center;
-   width:100vw;
+    width:100vw;
   }
 .img-container{
     position: absolute;
     z-index:1;
     width:100%;
-    top:0;left:0;
+    top:0;
+    left:0;
 }
 .img-container video{
     object-fit:cover;
@@ -62,7 +64,6 @@
 @media screen and (max-width:480px){
     .img-container video{
         object-position: 40%;   
-
     }
 }
 .btn-group{
@@ -73,14 +74,6 @@
     gap:clamp(2rem,10vw,5rem);
 }
 
-.nav_home{
-    /* display:grid; */
-  background:red;
-   /* top:0; */
-    /* background:red; */
-}
-
-
 
 .navhome_open,
 .nav_open{
@@ -90,12 +83,7 @@
     margin:0 auto;
     overflow: hidden;
     background:grey;
-    /* box-shadow: 2px 5px 45px 18px  rgba(0, 0, 0, 0.5); */
-    /* background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),url(https://images.unsplash.com/photo-1512101903502-7eb0c9022c74?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80);
-    background-repeat: no repeat;
-    background-size: cover;
-    background-position: center; */
-    /* background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("./Utilities/cover_page2.jpg"); */
+    position: relative;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -104,22 +92,19 @@
 }
 
 .navhome_open{
-    background:#7f776a;
     background:#322D20;
 }
 
 .shopsold_heading {
     font-size:clamp(42px,5vw,4rem);
     text-align:center;
-     position:relative;
-     z-index:2;
-    color:#353b43; 
-    color:#db9224;  
+    position:relative;
+    z-index:2;
+    color:var(--bg_org);  
     letter-spacing: 2px;
 
 }
 h1 span{
-    color:#94a48e;
     color:whitesmoke;
 }
 .nav-bar{
@@ -138,35 +123,28 @@ h1 span{
     bottom:0;
     left:0;
     position:absolute;
+    z-index:2;
 }
 .btn{
-background:transparent;
-font-size:clamp(0.6rem,calc(7px + 0.7vw),0.8rem);
-border:none;
-color:whitesmoke;
-text-decoration: none;
-letter-spacing: 2px;
+    background:transparent;
+    font-size:clamp(0.6rem,calc(7px + 0.7vw),0.8rem);
+    border:none;
+    color:whitesmoke;
+    text-decoration: none;
+    letter-spacing: 2px;
+    z-index:2;
+    position: relative;
 
 }
-
-/* .btn button{
-    color:whitesmoke;
-    background:transparent;
-    border:none;
-} */
 
 .btn-gender .button{
     border:solid #d2d7dd 2px ;
     border-radius:2px;
     background:transparent;
-    width:11.11111vw;
-    width:10rem;
     width:clamp(7rem,13vw,10rem);
-    height:3rem;
     height:clamp(2rem,3.9vw,3rem);
-    font-size: 24px;
     font-size:clamp(14px,calc(9px + .9vw),24px);
-    font-family:Segoe UI;
+    font-family:"Segoe UI";
     white-space: nowrap;
     position: relative;
     z-index:3;
@@ -201,7 +179,6 @@ letter-spacing: 2px;
     transition-delay: .2s;
     
 }
-
 
 .cursor,li{
     cursor:pointer;

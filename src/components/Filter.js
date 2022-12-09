@@ -3,16 +3,10 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { galleryAction } from "../store";
 import { getUniqueValue } from "../Utilities/getUniqueValue";
-import { arrange } from "../Utilities/arrange";
 import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
-import { AnimatePresence, motion } from "framer-motion";
 
 const Filter = ({display}) => {
   const dispatch = useDispatch();
-
-  const isFilterOpen = useSelector((state)=>state.gallery.isFilterOpen)
-
-  console.log(isFilterOpen)
 
   const filterValues = useSelector((state) => {
     return state.gallery.filters;
@@ -30,15 +24,12 @@ const Filter = ({display}) => {
     dispatch(galleryAction.filterProduct());
   }, [products, filterValues]);
 
-  console.log(color);
-
   const clearFilter = () => {
     dispatch(galleryAction.clearFilter());
   };
 
   const changed = (e) => {
     const { name, value, dataset } = e.target;
-    console.log(name, value, dataset, e.target.textContent);
     let prop;
     if (name === "price") {
       prop = Number(value);
@@ -103,7 +94,6 @@ const Filter = ({display}) => {
               );
             })}
           </p>
-          {/* <button className="cursor">Filter</button> */}
           <button onClick={clearFilter} className="cursor">
             Clear 
           </button>
@@ -117,7 +107,6 @@ export default Filter;
 
 const Wrapper = styled.div`
   height: fit-content;
-  border: solid #353b43 2px;
   border: solid #94a48e 2px;
   display: grid;
   grid-template-rows: 1fr 10%;
@@ -127,7 +116,7 @@ const Wrapper = styled.div`
   top: 90px;
   right:-${(prop)=>(prop.display==="grid"?"25%":null)};
   transition:  0.3s ease-in-out;
-  transiition-property:opacity top,
+  transition-property:opacity, top,translate;
 
   &:hover {
     border: solid #353b43 2px;
@@ -199,8 +188,6 @@ const Wrapper = styled.div`
       }
 
       p {
-        font-size: 0.7em;
-        // background: green;
         font-size: clamp(9px, calc(6px + 0.4vw), 12px);
         letter-spacing: 2px;
         display: flex;

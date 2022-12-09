@@ -1,14 +1,13 @@
-import React from "react";
 import { useState } from "react";
 import ProductDisplayOption from "./ProductDisplayOption";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
-import Heart from "./Heart";
 
 
 
-const Product = ({ url, products:name,i, id, price, cate,images,stock,type,color,ratings  }) => {
+
+const Product = ({ url, products:name, id, price, cate,images,stock,type,color,ratings  }) => {
   
 
   const [real, setReal] = useState({ display: false, pos: "" });
@@ -44,7 +43,6 @@ let favorite = {
     >
       
       <div className="img_container">
-        <Heart {...favorite} display={"none"} />
         <img className="img" src={url} alt={name} />
       </div>
       <Link to={`/productpersonal/${cate}/${id}`} className="prod_link">

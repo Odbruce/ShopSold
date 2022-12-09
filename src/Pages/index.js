@@ -1,13 +1,13 @@
 import Cart from "./Cart"
 import PersonalPage from "./PersonalPage"
-import Product from "./ProductsPage"
+import ProductsPage from "./ProductsPage"
 import Shop from "./Shop"
 import ShopHome from "./ShopHome"
 import WishList from "./WishList"
 import CheckOut from "./CheckOut"
 import Identity from "./Identity"
-import Form from "./SignIn"
-import Register from "./Register"
+import Form from "./Form"
+import Error_page from "./Error_page"
 
 
-export {Cart,Product,PersonalPage,ShopHome,Shop,CheckOut,Register,Form,Identity,WishList}
+export {Cart,ProductsPage,Error_page,PersonalPage,ShopHome,Shop,CheckOut,Form,Identity,WishList}

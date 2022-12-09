@@ -1,44 +1,25 @@
-import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import Order from "../components/Order";
 import { Check_orderSummary } from "../components/Check_orderSummary";
 import { PaystackButton } from "react-paystack";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useFireContext } from "../components/FirebaseContext";
 import { cartAction } from "../store";
 
 const CheckOut = () => {
   const navigate = useNavigate();
-  const { totalPrice } = useSelector((state) => state.cart);
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
+  const cart = useSelector((state)=> state.cart.cart);
   const { User } = useFireContext();
 
+  const discounted = cart.length>=5?0:2500;
+
+
   const dispatch = useDispatch();
-
-  const [success, setSuccess] = useState(false);
-
-  // useEffect(() => {
-  //   const clear = setTimeout(() => {
-  //     navigate("/");
-  //   }, 3000);
-  //   return () => clearTimeout(clear);
-  // }, [success]);
-
-  // if (success === true) {
-  //   window.setTimeout(() => {
-  //     navigate("/cart", { replace: true });
-  //   }, 2000);
-  // }
-
-  useEffect(() => {
-    if (success) {
-      navigate("/");
-    }
-  }, [success]);
-
+ 
   const componentProps = {
     email: User,
-    amount: totalPrice * 100,
+    amount: (totalPrice + discounted) * 100,
     metadata: {
       name: "john doe",
       phone: +234123457890,
@@ -47,11 +28,11 @@ const CheckOut = () => {
     text: "Place Order",
     onSuccess: () => {
       dispatch(cartAction.clearCart());
-      setSuccess(true);
+      navigate("/",{replace:true});
     },
     onClose: () => {
       alert("Wait! Don't leave :(");
-      navigate(-1);
+      navigate(-1,{replace:true});
     },
   };
 
@@ -60,7 +41,7 @@ const CheckOut = () => {
       <h1>
         shop<span>sold</span>
       </h1>
-      <Check_orderSummary />
+      <Check_orderSummary discounted={discounted} />
       <div className="payment">
         <h2 className="h2">Payment</h2>
         <div className="bill_address">
@@ -100,13 +81,11 @@ const Wrapper = styled.section`
   h1 {
     position: fixed;
     top: 2%;
-    // width:100%;
-    // text-align:start;
     left: 10%;
     font-size: clamp(16px, calc(2.22vw + 8px), 32px);
     font-weight: 500;
     letter-spacing: 2px;
-    color: #db9224;
+    color: var(--bg_org);
     span {
       padding: 0 5px;
       background: #a8a98e;
@@ -121,13 +100,12 @@ const Wrapper = styled.section`
     flex-direction: column;
     gap: 1rem;
     height: max-content;
-    // gap: 1rem;
     padding: 1rem;
     text-align: start;
     color: grey;
 
     h2 {
-      color: #272727;
+      color: var(--font_pri);
       font-size: 18px;
       text-transform: uppercase;
     }

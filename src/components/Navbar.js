@@ -1,17 +1,18 @@
-import { Link, useMatch, useParams,NavLink } from "react-router-dom";
-import { useEffect, useRef,useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import {  RiShoppingBag3Fill,RiShoppingBag3Line } from "react-icons/ri";
+import { Link, useMatch,NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import {  RiShoppingBag3Fill} from "react-icons/ri";
 import { BsBookmarkHeart,BsBookmarkHeartFill, BsSearch } from "react-icons/bs";
 import { Navmodal } from "../Utilities/Navmodal";
 import { GrClose } from "react-icons/gr";
 import {MdOutlineAccountCircle,MdAccountCircle,MdOutlineLogout} from "react-icons/md"
 import { SearchModal } from "../Utilities/SearchModal";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useSelector,useDispatch } from "react-redux";
 import { useFireContext } from "./FirebaseContext";
 import { cartAction } from "../store";
 import SideBar from "./SideBar";
+import { DiscountStyled } from "../Utilities/styled";
 
 
 
@@ -19,7 +20,6 @@ const Navbar = () => {
   const matchome = useMatch("/");
  
   const matchshop = useMatch("/shop/*");
-  const { cate } = useParams();
 
   const {User,logOut} = useFireContext();
 
@@ -33,8 +33,11 @@ const Navbar = () => {
   const cart = useSelector((state)=>state.cart.cart)
   const men =  useSelector((state)=>{return state.productCate.men})
   const women =  useSelector((state)=>{return state.productCate.women})
+  
 
+  
 
+  
     
   useEffect(()=>{
   dispatch(cartAction.total());
@@ -77,11 +80,9 @@ const Navbar = () => {
     const move = document.getElementById("move_header")
     const nav_bottom = nav.getBoundingClientRect().bottom;
     const scrollY = heading.getBoundingClientRect().top;
-    const scrollYY = heading.getBoundingClientRect().bottom;
 
     if (nav_bottom > scrollY) {
       heading.style.opacity = 0;
-      console.log("hide");
       return move.style.transform="translateY(0)"
     } else {
       heading.style.opacity = 1;
@@ -101,30 +102,25 @@ const Navbar = () => {
       {isFocused && <SearchModal Focused={{isFocused,setIsfocused}} />}
 
 
-      <div id="discount" className="product-heading">
-        <div className="discount">
-          <p>
-            <span>
-              <b>Discount</b> :{" "}
-            </span>
-            Sign up and get a 10% discount on any of your first five purchases,
-            along with other benefits.
-          </p>
-          <div className="button">
-            <button>Sign-up now</button>
+        <DiscountStyled id = "discount" >
+            <p>
+              <b>Discount</b> :
+            </p>
+          <div className="infinite_display">
+            <p>Sign up and get a free delivery on every purchase above four items</p>
+            <p>Sign up and get a free delivery on every purchase above four items</p>
           </div>
+            <Link className="button" to="/identity/register">Sign-up </Link>
           <button onClick={()=>document.getElementById("discount").style.display="none"} className="discount-close">
             <GrClose />
           </button>
-        </div>
-      </div>
+        </DiscountStyled>
       <SideBar {...sideBarProps}/>
       <Wrapper
         onMouseOver={closeSubmenu}
         animate={{ opacity: !matchome ? 1 : 0 }}
         id="nav_id"
       >
-        {/* {isFocused && <SearchModal Focused={{isFocused,setIsfocused}} />} */}
           
         <div
           onClick={() => {
@@ -200,10 +196,10 @@ const Navbar = () => {
                 <RiShoppingBag3Fill />
             </NavLink>
           </button>
-          <button>
+          <button >
             <NavLink className={({ isActive }) =>
               isActive ? `active_nav wishlist` :"wishlist"} to="/wishlist">
-              {({isActive})=>isActive?<BsBookmarkHeartFill/>:<BsBookmarkHeart />}
+              {({isActive})=>isActive?<BsBookmarkHeartFill/>:<BsBookmarkHeart  />}
             </NavLink>
 
           </button>
@@ -226,6 +222,8 @@ const Navbar = () => {
 
 export default Navbar;
 
+
+
 const Wrapper = styled(motion.section)`
   height: clamp(50px, 5vw, 72px);
   margin: 0 auto;
@@ -240,13 +238,10 @@ const Wrapper = styled(motion.section)`
   position: sticky;
   top: 0px;
   z-index: 3;
-  /* box-shadow:0px 9px 9px 0px rgb(0, 0, 0,.25); */
-  // background:yellow;
-
   
   .bars {
     display: none;
-    // background: red;
+
     @media (max-width: 780px) {
       display: flex;
       height: 0.9rem;
@@ -304,7 +299,6 @@ const Wrapper = styled(motion.section)`
   .nav_button,
   .ul {
     display: flex;
-    // justify-content: space-between;
     gap: 2vw;
     
   }
@@ -321,9 +315,8 @@ const Wrapper = styled(motion.section)`
     }
   }
   .ul {
-    // background:blue;
     position: relative;
-    
+
     .signout,
     .signin,
     .wishlist,
@@ -346,7 +339,6 @@ const Wrapper = styled(motion.section)`
       
       
       .drop_display {
-        // position: absolute;
         top: 0;
         border-top-left-radius: 1rem;
         border-top-right-radius: 1rem;
@@ -372,7 +364,7 @@ const Wrapper = styled(motion.section)`
         font-weight: lighter;
         color: #30281e;
         letter-spacing: 1px;
-        font-size: clamp(0.5rem, calc(1.3vw + 3px), 0.9rem);
+        font-size: clamp(9px,calc(10px + 0.5vw),16px);
         outline: none;
         z-index: 5;
         
@@ -386,7 +378,6 @@ const Wrapper = styled(motion.section)`
           font-family: futura-pt, sans-serif;
           font-size: 12px;
           letter-spacing: 1px;
-          // color: red;
         }
         
         @media (max-width: 780px) {
@@ -398,7 +389,6 @@ const Wrapper = styled(motion.section)`
         position: absolute;
         font-size: clamp(0.5rem, calc(1.3vw + 3px), 1rem);
         top: 25%;
-        // display: none;
         opacity: 0;
         right: 2.1rem;
 
@@ -411,23 +401,18 @@ const Wrapper = styled(motion.section)`
       .search_icon {
         z-index: 10;
         position: absolute;
-      font-size: clamp(0.8rem, calc(1.3vw + 3px), 1.1rem);
-      
-      right: 0;
-      width: 2rem;
-      height: 2rem;
-      display: grid;
+        font-size: clamp(0.8rem, calc(1.3vw + 3px), 1.1rem);
+        right: 0;
+        width: 2rem;
+        height: 2rem;
+        display: grid;
         place-items: center;
-        // color: #30281e;
-        border-radius: 50%;
-
+      
         @media(max-width:780px){
           width:fit-content;
           height:fit-content;
           position:relative;
-          
         }
-
       }
     }
 
@@ -437,9 +422,9 @@ const Wrapper = styled(motion.section)`
         transform:translateX(-40vw);
 
     }
-
     button {
       position: relative;
+      
       
       .active_nav{
         color: #30281e;
@@ -475,6 +460,9 @@ const Wrapper = styled(motion.section)`
       height: fit-content;
       align-self: center;
     }
+
+    
+   
   }
   .nav_button {
     gap: 0;
@@ -501,10 +489,6 @@ const Wrapper = styled(motion.section)`
   .shopsold {
     position: absolute;
     letter-spacing: 2px;
-    // font-size: 32px;
-    // top: 50%;
-    // left: 50%;
-    // transform: translate(-50%, -50%);
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
@@ -514,8 +498,6 @@ const Wrapper = styled(motion.section)`
     #move_header{
       transition:transform 0.4s cubic-bezier(0.5, 1, 0.89, 1);
       display:grid;
-      // justify-content:center;
-      // align-items:center;
       place-content:center;
     }
     
@@ -526,7 +508,7 @@ const Wrapper = styled(motion.section)`
       cursor: pointer;
       letter-spacing:2px;
       color: #353b43;
-      color: #db9224;  
+      color: var(--bg_org);  
       user-select: none;
       -moz-user-select: none;
       -webkit-user-select: none;
@@ -535,7 +517,6 @@ const Wrapper = styled(motion.section)`
       span {
         background: #a8a98e;
         padding:0 5px;
-        color: #94a48e;
         color: whitesmoke;
       }
     }

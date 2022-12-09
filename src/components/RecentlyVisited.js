@@ -3,16 +3,14 @@ import styled from "styled-components";
 import { ImCancelCircle } from "react-icons/im";
 import { useSelector,useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import Heart from "./Heart";
+import Heart from "../Utilities/Heart";
 import { productAction } from "../store";
 
 const RecentlyVisited = ({id}) => {
 
-  const visited = useSelector(state=>state.productCate.recentlyVisited);
+  const visited = useSelector(state=>state.productCate.recentlyVisited).filter(item=>item.id!==id);
 
-console.log(visited)
-console.log(id,"id")
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
 if(visited.length<1){
   return <></>;
@@ -37,7 +35,6 @@ const clear = ()=>{
           const { products: name, image,id,type,cate,color,price,ratings,stock,} = item;
 
           let favorite = {image,cate,name,color,price,ratings,stock,type,id,}
-          console.log(image)
 
           return (
         <div  key={id} className="visited">
@@ -57,7 +54,6 @@ export default RecentlyVisited;
 
 const Wrapper = styled.section`
   margin: 1vw 0 10vw;
-  // background:red;
   padding: 0 7.5vw 0 7.5vw;
   position: relative;
 
@@ -70,7 +66,6 @@ const Wrapper = styled.section`
     justify-content: space-between;
     align-items: center;
     letter-spacing: 1px;
-    // background:blue;
 
     h2{
       font-size: clamp(1.2rem, calc(1.389vw + 4px), 1.6rem);
@@ -78,7 +73,6 @@ const Wrapper = styled.section`
     }
 
     .cancel {
-      // position: absolute;
       background: #a8a98e;
       color: rgb(0, 0, 0, 0.8);
       cursor: pointer;
@@ -87,16 +81,16 @@ const Wrapper = styled.section`
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      color: #272727;
-      color: #dd4040;
       color: #2d2d2d;
+      font-size: clamp(9px, calc(7px + 0.5vw), 16px);
       padding: 0.2rem 0.7rem;
-      border:2px #272727 solid;
+      padding:0.3vw 0.5vw;
+      border:2px var(--font_pri) solid;
 
       &:hover {
         background: #eeeeee;
         span {
-          color: #272727;
+          color: var(--font_pri);
         }
       }
 

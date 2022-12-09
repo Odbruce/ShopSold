@@ -4,7 +4,7 @@ import styled from "styled-components";
 import {useState } from "react";
 import { Stars } from "../Utilities/Stars";
 import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
-import Heart from "./Heart";
+import Heart from "../Utilities/Heart";
 
 const ProductDisplayOption = ({ real,image,images,cate,name,color, price,ratings,stock,type,id }) => {
   const favorite = { image,cate,name,color,price,ratings,stock,type,id } 
@@ -61,7 +61,7 @@ const Wrapper = styled.div`
   width: max(300px, 30vw);
   height: 450px;
   border: 1px solid black;
-  z-index: 1;
+  z-index: 2;
   background: whitesmoke;
   ${(prop) => prop.pos}:0;
 
@@ -82,7 +82,6 @@ const Wrapper = styled.div`
       -ms-user-select: none;
   }
   .sub_img {
-    // z-index: 200;
     display: flex;
     justify-content: space-between;
     padding: 0 0.5rem;
@@ -91,10 +90,8 @@ const Wrapper = styled.div`
     margin-bottom: 0.5rem;
 
     .star {
-      // align-self: end;
       justify-content: flex-end;
       display: flex;
-      gap: 0.4rem;
       gap: 0.44vw;
       font-size: max(12px, calc(7px + 0.6vw));
       color: #ffd700;
@@ -116,7 +113,7 @@ const Wrapper = styled.div`
       }
 
       .active {
-        border-bottom: solid 2px #db9836;
+        border-bottom: solid 2px var(--bg_org);
       }
     }
   }
@@ -136,16 +133,4 @@ const Wrapper = styled.div`
   }
 `;
 
-export const HeartIcon = styled.div`
-  position: absolute;
-  top:${(prop)=>(prop.top?"-1.5rem":"2%")};
-  color: #453f39;
-  right: ${(prop)=>(prop.right?"0.9rem":"3%")};
-  z-index: 1;
-  cursor: pointer;
-  display: ${(prop) => (prop.display === "none" ? "none" : "iniitial")};
 
-  @media screen and (max-width: 900px) {
-    display: initial;
-  }
-`;

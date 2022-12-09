@@ -5,9 +5,10 @@ import styled from "styled-components";
 
 const Identity = () => {
   const { formType } = useParams();
-  console.log(formType);
+
   return (
     <Wrapper>
+     
       <div className="contained">
         <div className="navigate">
           <div className={formType === "register" ? "active" : null}>
@@ -30,12 +31,13 @@ const Identity = () => {
 export default Identity;
 
 const Wrapper = styled.section`
-  // min-height: 100vh;
   height: fit-content;
   width: 100%;
   display: flex;
   justify-content: center;
-  // padding-top: 3rem;
+
+
+  
 
   .contained {
     margin-bottom: 6rem;
@@ -74,7 +76,7 @@ const Wrapper = styled.section`
       &:nth-of-type(1)::after {
         content: "";
         position: absolute;
-        background: #db9836;
+        background: var(--bg_org);
         background: whitesmoke;
         width: 0.8px;
         right: 0;
@@ -82,14 +84,14 @@ const Wrapper = styled.section`
       }
     }
     .active {
-      border-bottom: 2px solid #db9836;
-      border-color: #272727;
+      border-bottom: 2px solid var(--bg_org);
+      border-color: var(--font_pri);
       .link {
         transition: 0.9s ease all;
         color: #565656;
         color: whitesmoke;
         color: black;
-        color: #272727;
+        color: var(--font_pri);
       }
     }
   }

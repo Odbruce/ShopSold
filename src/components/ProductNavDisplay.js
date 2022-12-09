@@ -5,19 +5,20 @@ import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
 
 export const ProductNavDisplay = ({obj}) => {
   return (
-        <Wrapper
+    <Wrapper
       initial={{ opacity: 1, y: -120 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{y:-200}}
       transition={{ type: "tween",ease:[0.1, 0.17, 0.67, 0.7],duration:.4 }}
+      onClick={()=>document.getElementById("prod_header").scrollIntoView()}
+      className="cursor"
       id="nav_display"
     >
       <article>
         <div className="img_wrapper">
           <img src={obj.image} alt="" />
-          {/* <h3>* * * * *</h3> */}
           <div className="prop_name">
-            <h2>{obj.name} </h2>
+            <h2  >{obj.name}</h2>
             <h3 className="h3">{priceToLocaleCurrrency(obj.price)}</h3>
           </div>
         </div>
@@ -55,7 +56,7 @@ const Wrapper = styled(motion.div)`
       background: #f0f0f0;
       background:rgb(240, 240, 240,0.8);
       width:20rem;
-      border-left:solid 3px #DB9836;
+      border-left:solid 3px var(--bg_org);
       padding:0 2vw 0 0;
       gap: 0.5rem;
       height:max(7.8vw,3rem);

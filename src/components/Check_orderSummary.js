@@ -4,8 +4,10 @@ import styled from "styled-components";
 import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
 import { cartAction } from "../store";
 
-export const Check_orderSummary = () => {
-  const { cart, totalPrice } = useSelector((state) => state.cart);
+export const Check_orderSummary = ({discounted}) => {
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
+  const cart = useSelector((state) => state.cart.cart);
+
 
   const dispatch = useDispatch();
 
@@ -18,20 +20,20 @@ export const Check_orderSummary = () => {
       <h2>order summary</h2>
       <ul>
         {cart.map((item) => {
-          const { name, img, price, quantity, size, color, id } = item;
+          const { name, image, price, quantity, size, color, id } = item;
           return (
             <li key={id}>
               <div className="img">
-                <img src={img} alt="" />
-                <h2 className="">{priceToLocaleCurrrency(price)}</h2>
+                <img src={image} alt={name} />
+                <h2 >{priceToLocaleCurrrency(price)}</h2>
               </div>
               <div className="order_prop">
                 <h4>{name}</h4>
                 <div>
                   <div className="prop">
                     <div className="color" style={{ background: color }}></div>
-                    <p className=""> {size}</p>
-                    <p className="">Qty: {quantity}</p>
+                    <p > {size}</p>
+                    <p >Qty: {quantity}</p>
                   </div>
                 </div>
               </div>
@@ -47,11 +49,11 @@ export const Check_orderSummary = () => {
         </div>
         <div className="footer_split">
           <p>delivery</p>
-          <p>N0.00</p>
+          <p>{priceToLocaleCurrrency(discounted)}</p>
         </div>
         <div className="footer_split">
           <h2>order total</h2>
-          <h2>{priceToLocaleCurrrency(totalPrice)}</h2>
+          <h2>{priceToLocaleCurrrency(totalPrice + discounted)}</h2>
         </div>
       </footer>
     </Wrapper>
@@ -60,14 +62,13 @@ export const Check_orderSummary = () => {
 
 const Wrapper = styled.div`
   width: 30rem;
-  
   padding: 1rem;
   display: grid;
   gap: 1rem;
 
   h2 {
     text-transform: uppercase;
-    color:#272727;
+    color:var(--font_pri);
 
   }
 
@@ -86,22 +87,19 @@ const Wrapper = styled.div`
     li {
       display: flex;
       gap: 1rem;
-        margin-bottom:0.5rem;
+      margin-bottom:0.5rem;
       
 
       .img {
         img {
           height: 7.5vw;
           min-height: 70px;
-          width: 13.89vw;
           object-fit: cover;
-          width: 100%;
           width: 10.89vw;
           min-width: 100px;
         }
         h2 {
           font-size: 14px;
-          color: #272727;
           color:grey;
           text-align: start;
         }
@@ -110,7 +108,6 @@ const Wrapper = styled.div`
       .order_prop{
         text-transform:capitalize;
         padding:1rem 0;
-        color:#272727;
         color:grey;
 
         .prop{

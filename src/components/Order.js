@@ -1,23 +1,17 @@
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from "react-router-dom";
+import {Link} from "react-router-dom";
 import { useFireContext } from "./FirebaseContext";
 
 
 const Order = ()=>{
-  const totalPrice = useSelector((state)=>state.cart.totalPrice)
-const navigate = useNavigate()
+    const totalPrice = useSelector((state)=>state.cart.totalPrice)
+    const cart = useSelector((state)=>state.cart.cart)
 
-const {User} = useFireContext();
+    const {User} = useFireContext();
+    const discounted = cart.length>=5?0:2500;
 
-const checkout = ()=>{
-    if(User){
-        return navigate("/checkout")
-    }
-    return navigate("/identity/signin");
-}
     return (
         <Wrapper>
             <h3>SUMMARY</h3>
@@ -27,14 +21,14 @@ const checkout = ()=>{
             </div>
             <div className="order-bill">
                 <p><b>DELIVERY</b></p>
-                <p><b>N0.00</b></p>
+                <p><b>{priceToLocaleCurrrency(discounted)}</b></p>
             </div>
             <div className="order-bill">
                 <p><b>TOTAL</b></p>
-                <p id="total"><b>{priceToLocaleCurrrency(totalPrice)}</b></p>
+                <p id="total"><b>{priceToLocaleCurrrency(totalPrice + discounted)}</b></p>
             </div>
             
-            <button onClick={checkout} className="checkout">{User?"CHECK OUT":"LOGIN TO PROCEED"}</button>
+            <button ><Link to={User?"/checkout":"/identity/signin"}  className="checkout">{User?"CHECK OUT":"LOGIN TO PROCEED"}</Link></button>
         </Wrapper>
     )
 }
@@ -43,7 +37,6 @@ const Wrapper = styled.section`
 border:solid 1px grey;
 position:sticky;
 top:calc(clamp(50px,5vw,72px) + 55px);
-width:25rem;
 width:27.7vw;
 min-width:15.75rem;
 height:fit-content;
@@ -76,18 +69,21 @@ background:#E8EBEE;
             color:green 
         }
     }
-    .checkout{
+    button{
         width:100%;
-        // height:3em;
         padding:min(2vw,1em);
         font-size:clamp(12px,calc(7px + 0.6vw),16px);
-        font-size:medium;
         border:none;
         margin-bottom:1em;
-        color:white;
         letter-spacing: 2px;
         background:rgb(0, 0, 0,0.8);
         transition:.7s ease-in;
+        
+        .checkout{
+            text-decoration:none;
+            color:whitesmoke;
+        }
+
 
         &:hover{
             background:rgb(0, 0, 1,.9);

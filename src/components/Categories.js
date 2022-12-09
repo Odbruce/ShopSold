@@ -1,33 +1,34 @@
-// import { Link } from "react-router-dom";
-import { useMatch, Link, useParams } from "react-router-dom";
-import axios from "axios";
+import {Link,useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useSelector} from "react-redux";
-import { useEffect, useState} from "react";
 
 const Categories = () => {
   const {cate} = useParams();
   const matchshop = cate==="men"||"women";
+    
   
-  const [isloading,setisLoading] = useState(false)
   const products =  useSelector((state)=>{return state.productCate[cate]})
 
   const displayproduct = (a,b=2,)=>{
     let str=[];
     for (let i = a; i < products.length/b ; i++){
-      const {name,imageUrl} = products[i];
-       str.push(<Link key={i} to={`/products/${cate + "/" + name}`} className="product-category">
+      const {name,imageUrl,videoUrl} = products[i];
+
+    str.push(<Link key={i} to={`/products/${cate}/${name}`} className={`product_category ${name==="suit yourself"?"coming_soon":""}`}>
           <div className="div">
-            <img
+           {name!=="suit yourself"?<img
               src={imageUrl}
               alt={name}
-            />
+            />:<video  autoPlay playsInline loop muted>
+            {" "}
+            <source type="video/mp4" src={videoUrl} />
+            your brower doesnt support html video
+          </video>}
           </div>
 
-          <article className="category-name">
-            <h3 className="cate_block">{name}</h3>
-            {/* <p className="cate_block">{name}</p> */}
+          <article className="category_name">
+            <h3 className={`cate_block ${name==="suit yourself"&&"cate_animate"}`}>{name}</h3>
           </article>
       </Link>)
   }
@@ -35,13 +36,7 @@ const Categories = () => {
 }
  
 
-  if(isloading){
-    return <div className="loadingio-spinner-eclipse-54l7pcgkx2x">
-    <div className="ldio-4axryukh3c">
-      <div></div>
-    </div>
-  </div>
-  }
+ 
 
 
   return (
@@ -54,25 +49,22 @@ const Categories = () => {
         <h1>{cate}'s Wear</h1>
         <div className="card1">
 
-        {
-    
+        {    
             displayproduct(0)
-             
-             }
+        }
 
         </div>
         <div className="ad">
-          <h2>PROMO 20% discount!</h2>
-          <h4>on first five purchases</h4>
-          <button className="">
-            <div></div> SHOP NOW
-          </button>
+          <h2>PROMO: 100% off on delivery fee </h2>
+          <h4>claim your discount by signing up and purchasing more than 4 products</h4>
+          <Link to="/identity/register" className="button" >
+            <div></div> sign up
+          </Link>
         </div>
         <div className="card2">
 
           {
             displayproduct(3,1)
-
           }
       
         </div>
@@ -81,6 +73,25 @@ const Categories = () => {
   );
 };
 export default Categories;
+
+
+const after = keyframes`
+0%,20%,40%{
+  transform:translateY(-110%);
+  opacity:0;
+}
+45%{
+  transform:translate(-140%,0);
+}
+50%,60%,80%,90%{
+  transform :translate(0,0);
+  opacity:1;
+}
+100%{
+  transform:translateY(-110%);
+}
+
+`
 
 const Wrapper = styled(motion.section)`
   display: grid;
@@ -92,7 +103,6 @@ const Wrapper = styled(motion.section)`
     text-align: center;
     font-size: 1.5rem;
     text-transform:capitalize;
-    text-transform:capitalize;
     color:#353B43;
     line-height: 1.2em;
     font-weight: 500, medium;
@@ -100,7 +110,7 @@ const Wrapper = styled(motion.section)`
 
     &::after{
       content:"";
-      background:#DB9224;
+      background:var(--bg_)224;
       position:absolute;
       bottom:-10%;
       left:25%;
@@ -115,7 +125,7 @@ const Wrapper = styled(motion.section)`
     gap: 1.67vw;
     margin: 1.5rem 0 2.25rem 0;
 
-    .product-category {
+    .product_category {
       position: relative;
       text-decoration:none;
       height: 22.22vw;
@@ -144,7 +154,8 @@ const Wrapper = styled(motion.section)`
         
         
         img {
-          transition: all ease-in-out 0.4s;
+          transition:ease-in-out 0.4s;
+          transition-property:transform;
           object-fit:cover;
           height:100%;
           width:100%;
@@ -152,17 +163,23 @@ const Wrapper = styled(motion.section)`
 
           
           &:hover  {
-            transform: scale(1.02);
+            transform: scale(1.07);
     
           }
         }
+
+        video{
+          object-fit:cover;
+          height:100%;
+          filter:brightness(50%);
+          width:100%;
+        }
       }
-      .category-name {
+      .category_name {
         position: absolute;
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        color: black;
         color:#30281E;
 
 
@@ -178,20 +195,39 @@ const Wrapper = styled(motion.section)`
         padding:0 1rem 0 0.2rem;
         text-transform:capitalize;
         }
+
+        .cate_animate{
+          position:relative;
+          overflow:hidden;
+          &:after{
+            content:"coming soon!";
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:white;
+            letter-spacing:2px;
+            padding:0 1rem 0 0.2rem;
+            text-transform:capitalize;
+            animation: infinite  ${after} 7s;
+
+          }
+        }
       }
 
       &:nth-of-type(1) {
         border-radius: 200% 0 0 10%;
         
 
-        .category-name {
+        .category_name {
           bottom: 2.25rem;
           right: 2.25rem;
         }
       }
 
       &:nth-of-type(2) {
-        .category-name {
+        .category_name {
           left: 50%;
           transform: translatex(-50%);
           bottom: 2.25rem;
@@ -201,10 +237,66 @@ const Wrapper = styled(motion.section)`
       &:nth-of-type(3) {
         border-radius: 0 200% 10% 0;
         
-        .category-name {
+        .category_name {
           left: 2.25rem;
           bottom: 2.25rem;
         }
+      }
+    }
+    .coming_soon{
+      pointer-events:none;
+    }
+  }
+
+  .ad{
+    height:clamp(100px,13vw,200px);
+    background:black;
+    color:white;
+    width:100%;
+    display:grid;
+    place-items: center;
+    padding:.7em 0;
+    letter-spacing:.3em;
+
+    h2{
+      font-size: clamp(12px,calc(9px + .9vw),24px);
+    }
+    h4{
+      font-size:clamp(12px,calc(7px + 0.6vw),16px);
+    }
+    .button{
+      width:fit-content;
+      height:auto;
+      padding:.5em;
+      font-family:Segoe UI;
+      font-size:  clamp(16px,calc(1.71vw + 4px),20px);
+      position:relative;
+      background:transparent;
+      border:solid #d2d7dd 2px ;
+      border-radius:2px;
+      letter-spacing:1px;
+      color:white;
+      z-index:2;
+      font-weight: 600;
+      overflow: hidden;
+
+      &:hover div{
+        width:100%;
+        z-index:-1;
+      }
+
+      &:hover{
+        color:#353b43;
+        transition-delay: .2s;
+      }
+
+      div{
+        background:#d2d7dd;
+        position:absolute;
+        top:0;left:0;
+        height:100%;
+        width:0;
+        transition:ease-in .3s;
       }
     }
   }
@@ -216,7 +308,7 @@ const Wrapper = styled(motion.section)`
     gap: 1.67vw;
     margin: 2.25rem 0;
 
-    .product-category {
+    .product_category {
       position: relative;
       text-decoration:none;
       height: 22.22vw;
@@ -239,21 +331,22 @@ const Wrapper = styled(motion.section)`
         width: 30vw;
         overflow:hidden;
 
+        img {
+          height:100%;
+          width:100%;
+          transition:ease-in-out 0.4s;
+          transition-property:transform;
+          object-fit:cover;
+          // object-position: 0% 20%;
+
+        }
         &:hover img {
           transform: scale(1.02);
         }
 
-        img {
-          height:100%;
-          width:100%;
-          transition: transform ease-in 0.4s;
-          object-fit:cover;
-          object-position: 0% 20%;
-
-        }
       }
 
-      .category-name {
+      .category_name {
         position: absolute;
         color: black;
         display: flex;
@@ -270,14 +363,14 @@ const Wrapper = styled(motion.section)`
       &:nth-of-type(1) {
         border-radius: 10% 0 0 200%;
 
-        .category-name {
+        .category_name {
           top: 2.25rem;
           right: 2.25rem;
         }
       }
 
       &:nth-of-type(2) {
-        .category-name {
+        .category_name {
           left: 50%;
           transform: translatex(-50%);
           top: 2.25rem;
@@ -287,7 +380,7 @@ const Wrapper = styled(motion.section)`
       &:nth-of-type(3) {
         border-radius: 0 10% 200% 0;
 
-        .category-name {
+        .category_name {
           left: 2.25rem;
           top: 2.25rem;
         }
@@ -302,7 +395,7 @@ const Wrapper = styled(motion.section)`
       gap: 1.67vw;
       margin: 1.5rem 0 2.25rem 0;
       
-      .product-category {
+      .product_category {
         border-radius: 0;
         background:rgb(210, 215, 221,.4);
         display:flex;
@@ -313,14 +406,14 @@ const Wrapper = styled(motion.section)`
         }
         &:nth-of-type(2){
 
-          .category-name{
+          .category_name{
             transform:translatex(0);
           }
         }
         &:nth-of-type(3) {
         border-radius:0;
         }
-        .category-name {
+        .category_name {
           position:initial;
         }
         div{

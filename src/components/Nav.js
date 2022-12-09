@@ -1,39 +1,32 @@
 import { motion } from "framer-motion";
-import { Link, useMatch } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { useState, useEffect } from "react";
-import {cover_page2,cover_page1,cover_page3} from "../Utilities"
+import {cover_page2,cover_page3,cover_page4} from "../Media"
 import {useFireContext} from "../components/FirebaseContext"
 
 
 
 
 const Nav = () => {
-  const [prop, setProp] = useState(true);
   const {User} = useFireContext();
 
-  const [background,setBackground] = useState([cover_page1,cover_page2,cover_page3]);
-
+  const background=[cover_page2,cover_page3,cover_page4];
   const [imgIndex, setimgIndex] = useState(2);
-  // const match = useMatch("/shop/women");
-  // useEffect(() => {
-  //   match && setProp(true);
-  //   setBackground([cover_page1,cover_page2,cover_page3])
-  // }, []);
 
-console.log("nav render")
 
-  // useEffect(() => {
-  //   const add = setInterval(() => {
-  //     if (imgIndex === 2) {
-  //       return setimgIndex(0);
-  //     }
-  //     return setimgIndex((prev)=>{return prev + 1});
-  //   }, 3000);
+  useEffect(() => {
+    const add = setInterval(() => {
+      
+      if (imgIndex === background.length-1) {
+        return setimgIndex(0);
+      }
+      return setimgIndex((prev)=>{return prev + 1});
+    }, 6000);
 
-  //   return () => {
-  //     clearInterval(add);
-  //   };
-  // }, [imgIndex]);
+    return () => {
+      clearInterval(add);
+    };
+  }, [imgIndex]);
 
   const main = {
     animate: {
@@ -63,6 +56,21 @@ console.log("nav render")
       },
     },
   };
+
+
+  const underline = {
+    initial:{ scaleX: 0 },
+    animate:{ 
+      scaleX: 1 ,
+      transition:{
+        delay: 1.2,
+        duration: 0.5,
+        type: "tween",
+        ease: [0.1, 0.17, 0.67, 0.7],
+      }
+    },
+  }
+
   const signIn = {
     initial: {
       opacity: 0,
@@ -77,6 +85,8 @@ console.log("nav render")
     },
   };
   return (
+    <section className="nav_home">
+
     <motion.div
       variants={main}
       initial="initial"
@@ -84,11 +94,7 @@ console.log("nav render")
       exit="exit"
       className = "nav_container"
     >
-      {/* <img
-        className="cover_img"
-        src={require("../Utilities/cover_page1.jpg")}
-        alt=""
-      /> */}
+    
 
       <motion.div
         initial={{ opacity: 0 }}
@@ -100,40 +106,53 @@ console.log("nav render")
           transition: { duration: 1 },
         }}
         className="nav_open"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${background[imgIndex]})`,
-        }}
       >
+         {background.map((item,index)=>{
+      
+      return(
+       <img
+        key={index}
+        className={`${imgIndex === index?"cover_img":"null cover_img"}`}
+        src={item}
+        alt=""
+        />)
+
+     }) 
+      }
         <motion.div
           variants={signIn}
-          // exit={{ opacity: 0 }}
           className="nav-bar "
         >
-         <Link  to="/identity/signin"> <motion.button className="btn cursor">{!User?"Sign-in":null}</motion.button></Link>
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{
-              delay: 1.2,
-              duration: 0.5,
-              type: "tween",
-              ease: [0.1, 0.17, 0.67, 0.7],
-            }}
-            exit={{
-              scaleX: 0,
-              transition: {
+         <Link  to="/identity/signin"> <motion.button  exit={{
+                opacity: 0,
+                transition: {
                 duration: 0.5,
                 type: "tween",
                 ease: [0.1, 0.17, 0.67, 0.7],
+              },
+            }}className="btn cursor">{!User?"Sign-in":null}</motion.button></Link>
+          <motion.div
+           variants={underline}
+            exit={{
+              scaleX: 0,
+              transition: {
+              duration: 0.5,
+              type: "tween",
+              ease: [0.1, 0.17, 0.67, 0.7],
               },
             }}
             className="div_bar"
           ></motion.div>
         </motion.div>
         <motion.div className="landing-write">
-          <motion.h1  exit={{opacity:0,transition:{duration:0.5,
-                    ease: [0.1, 0.17, 0.67, 0.7],
-                    type:"tween"}}} className="shopsold_heading">
+          <motion.h1  exit={{
+                        opacity:0,
+                        transition:{
+                          duration:0.5,
+                          ease: [0.1, 0.17, 0.67, 0.7],
+                          type:"tween"
+                        }
+                      }} className="shopsold_heading">
             SHOP<span>SOLD</span>
           </motion.h1>
           <div className="btn-group">
@@ -174,6 +193,7 @@ console.log("nav render")
         </motion.div>
       </motion.div>
     </motion.div>
+    </section>
   );
 };
 export default Nav;

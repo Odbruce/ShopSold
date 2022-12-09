@@ -1,18 +1,18 @@
-import React,{createContext, useContext,useEffect,useRef,useState,} from "react"
+import {createContext, useContext,useEffect,useState,} from "react"
 import { auth,db } from "../firebase";
 import {createUserWithEmailAndPassword,
     onAuthStateChanged,
     signInWithEmailAndPassword,
     signOut,
     GoogleAuthProvider,
-    signInWithRedirect
+    signInWithPopup,
   } from "firebase/auth";
-  import { addDoc,collection,deleteDoc,doc, onSnapshot, serverTimestamp, query, orderBy, } from "firebase/firestore";
+import { addDoc,collection,deleteDoc,doc, onSnapshot, serverTimestamp, query, orderBy, connectFirestoreEmulator, } from "firebase/firestore";
 import { useDispatch,useSelector } from "react-redux";
 import { productAction } from "../store";
-  
+import { useNavigate } from "react-router-dom";
 
-const Context = React.createContext();
+const Context = createContext();
 
 
 const FirebaseContext = ({children}) => {
@@ -20,91 +20,122 @@ const FirebaseContext = ({children}) => {
     const dispatch = useDispatch();
 
     const [User,setUser] = useState("");
+    const [signError,setError] = useState("")
 
 
     const wishlist = useSelector(state=>state.productCate.savedProducts)
-
+    const navigate = useNavigate();
     
-    const googleSignIn = ()=>{
+    const googleSignIn = async ()=>{
         const provider = new GoogleAuthProvider();
 
-        return signInWithRedirect(auth, provider);
+        try{
+          const result = await signInWithPopup(auth, provider)
+          if(result.user){
+            navigate("/",{replace:true})
+          }
+        }
+          catch(e){
+            setError(e.code.replace("auth/","").replaceAll("-"," "));
+            setTimeout(()=>{setError("")},3000)
+          }
     }
 
 
     useEffect( ()=>{
         const unsubscribe= onAuthStateChanged(auth,user=>{
 
-        //   setLoading(true);
-
          if(user){
           setUser(user.email);
-           console.log(user)
           }else{
             setUser("")
-            console.log("error");
           }
          });
          return unsubscribe;
        },[])
 
-       const signUp = (email,password)=>{
-         return createUserWithEmailAndPassword(auth,email,password)
+       const signUp = async (email,password)=>{
+
+         try{
+          const result = await createUserWithEmailAndPassword(auth,email,password);
+          if(result.user){
+            navigate("/",{replace:true})
+          }
+              }
+         catch(e){
+                setError(e.code.replace("auth/","").replaceAll("-"," "));
+                setTimeout(()=>{setError("")},3000)
+         }
        }
-       const login = (email,password)=>{
-       return signInWithEmailAndPassword(auth,email,password);
+
+       const login = async (email,password)=>{
+          try{
+            const result = await signInWithEmailAndPassword(auth,email,password);
+            if(result.user){
+              navigate("/",{replace:true})
+            }
+                }
+          catch(e){
+                  setError(e.code.replace("auth/","").replaceAll("-"," "));
+                  setTimeout(()=>{setError("")},3000)
+          }
        
        }
        const logOut = ()=>{
-        //  setUser(null);
-        console.log("logout",User)
          signOut(auth);
        }
     
       
-      // const getWishList = ()=>{
-      //   // setLoading(true);
+      const getWishList = ()=>{
 
-      //   const colRef = collection(db,user);
+        const colRef = collection(db,User);
 
-      //    const q = query(colRef,orderBy("createdAt")); 
+         const q = query(colRef,orderBy("createdAt")); 
 
-      //    onSnapshot(q,(snapshot) => {   
-      //       const payload = snapshot.docs.map((doc)=>{
-      //           const obj = doc.data();
-      //           return {...obj,delId:doc.id}
-      //           })        
-      //     dispatch(productAction.getWishList(payload) );
+         onSnapshot(q,(snapshot) => {   
+            const payload = snapshot.docs.map((doc)=>{
+                const obj = doc.data();
+                return {...obj,delId:doc.id,createdAt:""}
+                })   
+          dispatch(productAction.getWishList(payload) );
 
-      //   //    setLoading(false);
 
-      //     })
+          })
 
-      //  }
+       }
 
-      //  const addWishList = (obj)=>{
-      //   const {id} = obj;
+      
 
-      //   let isAvailable = wishlist.find(item=>item.id===id);
+       const addWishList = (obj)=>{
+        const {id} = obj;
 
-      //   if(!isAvailable){
-      //        const colRef = collection(db,user);
-      //        addDoc(colRef,{...obj,createdAt:serverTimestamp()},)
-      //       return  dispatch(productAction.addToFavourite(obj));
-      //   }
-      //   return ;
+        if(!User){
+          setError("please sign in to save product");
+                  setTimeout(()=>{setError("")},3000)
+        }
 
-      //  }
+        let isAvailable = wishlist.find(item=>item.id===id);
+
+        if(!isAvailable){
+             const colRef = collection(db,User);
+             addDoc(colRef,{...obj,createdAt:serverTimestamp()},)
+            return  dispatch(productAction.addToFavourite(obj));
+        }
+        return ;
+
+       }
 
        
-      //  const del =  (Id) => {
+       const del =  async(Id) => {
     
-      //   const idRef = doc(db, user, Id);
-      //   deleteDoc(idRef);
-      // };
+        const idRef = doc(db, User, Id);
+
+         deleteDoc(idRef);
+       
+      };
     
   return (
-    <Context.Provider value={{User,signUp,logOut,login,googleSignIn,}}>{children}</Context.Provider >
+    <Context.Provider value={{User,signUp,logOut,login,googleSignIn,signError,getWishList,addWishList,del}}>{children}</Context.Provider >
   )
 }
 export const useFireContext = () => {

@@ -64,8 +64,7 @@ const SideBar = ({bar,setbar,women,men,enter,setEnter}) => {
       </li>
     </ul>
     <div
-      onClick={(e) => {
-        console.log("click")
+      onClick={() => {
         document.body.style.overflow = "initial";
           return setbar(false);
 
@@ -107,7 +106,7 @@ const NavWrapper = styled.nav`
       border: none;
       cursor: pointer;
       position: relative;
-      color:#272727;
+      color:var(--font_pri);
       border-bottom: solid 1px transparent;
       text-transform: uppercase;
       transition: 0.4s ease all;
@@ -118,11 +117,11 @@ const NavWrapper = styled.nav`
         left: 0;
         bottom: 0;
         height: 2px;
-        background: #db9836;
+        background: var(--bg_org);
       }
     }
     .btn_active {
-      border-bottom: solid 2px #db9836;
+      border-bottom: solid 2px var(--bg_org);
     }
   }
 
@@ -133,7 +132,6 @@ const NavWrapper = styled.nav`
     height: calc(100vh - 130px);
     overflow: auto;
     scrollbar-width: none;
-    // gap: 1rem;
 
     &::-webkit-scrollbar {
       display: none;
@@ -161,7 +159,7 @@ const NavWrapper = styled.nav`
           font-size: 14px;
           text-transform:uppercase;
           width: 200px;
-          color:#272727;
+          color:var(--font_pri);
           font-weight:500;
           letter-spacing:1px;
         }
@@ -175,7 +173,6 @@ const NavWrapper = styled.nav`
     padding: 0.4rem;
     position: absolute;
     height: 50px;
-    // margin-bottom: 1rem;
     bottom: 0;
     width: 100%;
     background: #94a48e;
@@ -184,7 +181,6 @@ const NavWrapper = styled.nav`
     position: absolute;
     top: 0;
     height: 100%;
-    // opacity:0
 }
 
 .blur_active {
