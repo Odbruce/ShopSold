@@ -7,7 +7,7 @@ import { Navmodal } from "../Utilities/Navmodal";
 import { GrClose } from "react-icons/gr";
 import {MdOutlineAccountCircle,MdAccountCircle,MdOutlineLogout} from "react-icons/md"
 import { SearchModal } from "../Utilities/SearchModal";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { useSelector,useDispatch } from "react-redux";
 import { useFireContext } from "./FirebaseContext";
 import { cartAction } from "../store";
@@ -24,7 +24,6 @@ const Navbar = () => {
   const {User,logOut} = useFireContext();
 
   const [navmodal, setnavmodal] = useState("men");
-  const [enter, setEnter] = useState("women");
   const [bar, setbar] = useState(false);
   const [isFocused, setIsfocused] = useState(false);
 
@@ -42,7 +41,7 @@ const Navbar = () => {
   useEffect(()=>{
   dispatch(cartAction.total());
   localStorage.setItem("cart", JSON.stringify(cart));
-
+     // eslint-disable-next-line
   },[cart])
 
   const navfunc = (e) => {
@@ -65,7 +64,7 @@ const Navbar = () => {
   
 
 
-  const sideBarProps = {enter,setEnter,bar,setbar,men,women}
+  const sideBarProps = {bar,setbar,men,women}
 
 
 

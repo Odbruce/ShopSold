@@ -46,7 +46,6 @@ export const products = createSlice({
                 return item.values
             }).flat();
 
-            console.log(menValues,womenValues);
 
             state.men = dataM.map((item)=>{
                         const {name,featuredUrl:imageUrl,videoUrl,values} = item;
@@ -63,7 +62,6 @@ export const products = createSlice({
 
         updateSearch(state,action){
             const{name,value} = action.payload;
-            console.log(name,value)
 
             state.filter[name] = value;
         },
@@ -91,9 +89,6 @@ export const products = createSlice({
            const saved = action.payload;
 
            state.savedProducts = [...state.savedProducts,saved];
-            // localStorage.setItem("wishlist", JSON.stringify([...state.savedProducts,saved]));
-
-
         },
         getWishList(state,action){
             const saved = action.payload;
@@ -103,21 +98,16 @@ export const products = createSlice({
             let viewed = [...state.recentlyVisited];
 
 
-            console.log(viewed,"1st")
 
             const {id:view_id} = action.payload;
 
-            console.log(action.payload,"action")
 
             let isAvailable = viewed.find(item=>item.id === view_id);
 
-            console.log(isAvailable,"isavailable")
 
             if(!isAvailable){
                 viewed = [...state.recentlyVisited,action.payload];
-                console.log(viewed,"!available")
             }
-            console.log(viewed,action.payload,"f.viewed");
             state.recentlyVisited = viewed;
         },
 
@@ -128,7 +118,6 @@ export const products = createSlice({
         deleteWish(state,action){
             let filtered = [...state.savedProducts];
              filtered = filtered.filter((item)=>item.id!==action.payload);
-            console.log(filtered,action.payload);
 
             state.savedProducts = filtered;
         }
@@ -149,7 +138,6 @@ export const products = createSlice({
                 return item.values
             }).flat();
 
-            console.log(menValues,womenValues);
 
             state.men = dataM.map((item)=>{
                         const {name,featuredUrl:imageUrl,videoUrl,values} = item;

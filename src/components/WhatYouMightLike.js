@@ -32,6 +32,8 @@ const WhatYouMightLike = () => {
     setproductsArray(
       indexArray(6, cateArray.length).map((item) => cateArray[item])
       );
+
+       // eslint-disable-next-line
     }, []);
     
 
@@ -101,7 +103,7 @@ const Wrapper = styled.section`
  li {
     background: #94a48e;
     position: relative;
-    border:1px solid var(--font_pri);
+    border:1px solid #272727;
     height: clamp(200px, 50vw, 400px);
     scroll-snap-align: start;
     overflow:hidden;
@@ -135,7 +137,7 @@ const Wrapper = styled.section`
     h4 {
       position: absolute;
       font-size: clamp(9px,calc(10px + 0.5vw),16px);
-      color: var(--font_pri);
+      color: #272727;
       text-transform:uppercase;
       padding:2px 10px;
       bottom: 10%;

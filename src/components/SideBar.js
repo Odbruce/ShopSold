@@ -1,10 +1,11 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { BsFacebook, BsInstagram, BsTwitter, BsSnapchat } from "react-icons/bs";
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
+const SideBar = ({bar,setbar,women,men}) => {
+  const [enter, setEnter] = useState("men");
 
-const SideBar = ({bar,setbar,women,men,enter,setEnter}) => {
 
     return (
     <NavWrapper
@@ -23,6 +24,7 @@ const SideBar = ({bar,setbar,women,men,enter,setEnter}) => {
       <button
       name="men"
         onClick={(e) => {
+
           return setEnter(e.target.name)
         }}
       >
@@ -31,17 +33,24 @@ const SideBar = ({bar,setbar,women,men,enter,setEnter}) => {
     </div>
     <ul className="ul_nav">
     {  enter==="men"?men.map((item,index)=>{
-      const {name,imageUrl,values:[obj]} = item;
-        return <li key={index} >
-        <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${obj.type}/${name}`}>
-          <p>{name}</p>
-          <img src={imageUrl} alt={name} />
+      const {name,imageUrl,videoUrl} = item;
+
+        return (
+        <li key={index} >
+        <Link className={`link_nav ${name==="suit yourself"&&"disabled"}`} onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }}  to={`/products/${enter}/${name}`}>
+            <p className={name==="suit yourself"?"coming_soon":null}>{name}</p>
+            {name!=="suit yourself"?<img src={imageUrl} alt={name} />:<video  autoPlay playsInline loop muted>
+            {" "}
+            <source type="video/mp4" src={videoUrl} />
+            your brower doesnt support html video
+          </video>}
         </Link>
-      </li>}):
+      </li>)
+      }):
       women.map((item,index)=>{
-        const {name,imageUrl,values:[obj]} = item;
+        const {name,imageUrl} = item;
           return <li key={index}>
-          <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${obj.type}/${name}`}>
+          <Link className="link_nav" onClick={()=>{setbar(false);return document.body.style.overflow = "initial" }} to={`/products/${enter}/${name}`}>
             <p>{name}</p>
             <img src={imageUrl} alt={name} />
           </Link>
@@ -77,6 +86,24 @@ const SideBar = ({bar,setbar,women,men,enter,setEnter}) => {
 }
 
 export default SideBar
+
+const after = keyframes`
+0%,20%,30%{
+  transform:translateY(-110%);
+  opacity:0;
+}
+45%{
+  transform:translate(-140%,0);
+  opacity:0;
+}
+50%,60%,90%{
+  transform :translate(0,0);
+  opacity:1;
+}
+100%{
+  transform:translateY(-110%);
+}
+`
 
 const NavWrapper = styled.nav`
   position: fixed;
@@ -142,27 +169,58 @@ const NavWrapper = styled.nav`
 
       .link_nav {
         display: flex;
-        background: grey;
         background: #bbb8b0;
         justify-content: space-between;
         align-items: center;
         padding-left: 0.4rem;
         text-decoration: none;
         color: whitesmoke;
+
         img {
           width: 80px;
           height: 80px;
           background: #94a48e;
           object-fit:cover;
         }
+
+        video{
+          object-fit:cover;
+          filter:brightness(50%);
+          width: 80px;
+          height: 80px;
+        }
+
         p {
           font-size: 14px;
           text-transform:uppercase;
-          width: 200px;
+          width: 100px;
           color:var(--font_pri);
           font-weight:500;
           letter-spacing:1px;
         }
+
+        .coming_soon{
+          position:relative;
+          overflow:hidden;
+          &:after{
+            content:"coming soon!";
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:white;
+            letter-spacing:2px;
+            padding:0 1rem 0 0.2rem;
+            text-transform:capitalize;
+            animation: infinite  ${after} 7s;
+
+          }
+        }
+      }
+
+      .disabled{
+        pointer-events:none;
       }
     }
   }

@@ -71,7 +71,7 @@ export const gallery = createSlice({
         },
         filterProduct(state){
             const {allProducts} = state;
-            const {color,size,price,shipping} = state.filters;
+            const {color,size,price} = state.filters;
             
             let filteredProduct = {...allProducts};
 
@@ -100,8 +100,6 @@ export const gallery = createSlice({
             const {filteredProducts} = state;
             let sortedProduct={...filteredProducts};
 
-            const {sort} = state;
-            console.log(sort);
 
             if(state.sort ==="name a-z"){
 
@@ -133,7 +131,7 @@ export const gallery = createSlice({
             state.isSortOpen=!state.isSortOpen;
         },
         updateSort(state,action){
-            console.log(action.payload)
+            
             state.sort = action.payload
         },
         openFilter(state){

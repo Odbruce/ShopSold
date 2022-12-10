@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BsBookmarkHeart, BsSearch } from "react-icons/bs";
+import {  BsSearch } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { productAction } from "../store";
 import { useSelector, useDispatch } from "react-redux";
@@ -37,6 +37,7 @@ export const SearchModal = ({ Focused }) => {
   };
   useEffect(() => {
     dispatch(productAction.filterSearch());
+     // eslint-disable-next-line
   }, [text]);
 
   useEffect(() => {
@@ -91,7 +92,7 @@ export const SearchModal = ({ Focused }) => {
                   onClick={closeSearch}
                   className="search_product"
                 >
-                  <img src={url} className="search_img"></img>
+                  <img src={url} alt={name} className="search_img"></img>
                   <div className="search_name">
                     <p>{name}</p>
                   </div>

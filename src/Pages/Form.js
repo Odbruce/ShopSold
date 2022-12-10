@@ -163,7 +163,7 @@ const Wrapper = styled.div`
       letter-spacing: 0.7px;
       background: whitesmoke;
       height: max(3.33vw,30px);
-      font-family:segoe UI;
+      font-family:Segoe UI;
       padding:0 1vw;
       color: #565656;
       font-size:clamp(9px, calc(7px + 0.5vw), 16px);
@@ -233,7 +233,6 @@ const Wrapper = styled.div`
 
       label {
         display: block;
-        font-size: 14px;
         font-size:clamp(9px, calc(7px + 0.5vw), 16px);
         pointer-events: none;
         text-transform: uppercase;
@@ -294,7 +293,7 @@ const Wrapper = styled.div`
     }
   }
   .join {
-    font-family:"segoe UI";
+    font-family: Segoe UI;
     width: 100%;
     background: black;
     color: whitesmoke;

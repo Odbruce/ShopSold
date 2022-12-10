@@ -26,7 +26,7 @@ const Nav = () => {
     return () => {
       clearInterval(add);
     };
-  }, [imgIndex]);
+  }, [imgIndex,background]);
 
   const main = {
     animate: {

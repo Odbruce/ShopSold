@@ -19,7 +19,6 @@ const Wrapper = styled.div`
     position: fixed;
     font-family: "Segoe UI";
     font-size: clamp(9px, calc(7px + 0.5vw), 16px);
-    color: green;
     letter-spacing: 1px;
     z-index: 5;
     right: 0;

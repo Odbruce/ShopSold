@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { priceToLocaleCurrrency } from "../Utilities/priceToLocaleCurrrency";
 import { cartAction } from "../store";
 
-export const Check_orderSummary = ({discounted}) => {
+export const CheckOrderSummary = ({discounted}) => {
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const cart = useSelector((state) => state.cart.cart);
 
@@ -13,6 +13,8 @@ export const Check_orderSummary = ({discounted}) => {
 
   useEffect(() => {
     dispatch(cartAction.total());
+    
+     // eslint-disable-next-line
   }, []);
 
   return (

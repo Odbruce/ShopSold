@@ -5,7 +5,7 @@ import styled from 'styled-components'
 const Error_page = () => {
   return (
     <Wrapper className="err_loading">
-      <img className="error_img" src={require("../Media/page_not_found.png")} />
+      <img className="error_img" alt="error_img" src={require("../Media/page_not_found.png")} />
     <div className="err_p">
       <p >hmm something went wrong ...page not found.</p>
       <Link className="err_link" to="/" replace >Go Home</Link>

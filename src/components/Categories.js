@@ -76,14 +76,15 @@ export default Categories;
 
 
 const after = keyframes`
-0%,20%,40%{
+0%,20%,30%{
   transform:translateY(-110%);
   opacity:0;
 }
 45%{
   transform:translate(-140%,0);
+  opacity:0;
 }
-50%,60%,80%,90%{
+50%,60%,90%{
   transform :translate(0,0);
   opacity:1;
 }
@@ -190,14 +191,15 @@ const Wrapper = styled(motion.section)`
         }
 
         .cate_block{
-        background:white;
-        letter-spacing:2px;
-        padding:0 1rem 0 0.2rem;
-        text-transform:capitalize;
+          background:white;
+          letter-spacing:2px;
+          padding:0 1rem 0 0.2rem;
+          text-transform:capitalize;
         }
 
         .cate_animate{
           position:relative;
+
           overflow:hidden;
           &:after{
             content:"coming soon!";
@@ -249,7 +251,7 @@ const Wrapper = styled(motion.section)`
   }
 
   .ad{
-    height:clamp(100px,13vw,200px);
+    height:clamp(140px,13vw,200px);
     background:black;
     color:white;
     width:100%;
@@ -257,12 +259,14 @@ const Wrapper = styled(motion.section)`
     place-items: center;
     padding:.7em 0;
     letter-spacing:.3em;
+    text-align:center;
+
 
     h2{
-      font-size: clamp(12px,calc(9px + .9vw),24px);
+      font-size: clamp(14px,calc(9px + .9vw),24px);
     }
     h4{
-      font-size:clamp(12px,calc(7px + 0.6vw),16px);
+      font-size:clamp(9px,calc(7px + 0.3vw),16px);
     }
     .button{
       width:fit-content;
@@ -279,6 +283,7 @@ const Wrapper = styled(motion.section)`
       z-index:2;
       font-weight: 600;
       overflow: hidden;
+      text-decoration:none;
 
       &:hover div{
         width:100%;

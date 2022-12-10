@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Check_orderSummary } from "../components/Check_orderSummary";
+import { CheckOrderSummary } from "../components/CheckOrderSummary";
 import { PaystackButton } from "react-paystack";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -41,7 +41,7 @@ const CheckOut = () => {
       <h1>
         shop<span>sold</span>
       </h1>
-      <Check_orderSummary discounted={discounted} />
+      <CheckOrderSummary discounted={discounted} />
       <div className="payment">
         <h2 className="h2">Payment</h2>
         <div className="bill_address">

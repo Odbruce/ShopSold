@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { ImCancelCircle } from "react-icons/im";
 import { useSelector,useDispatch } from "react-redux";
@@ -40,7 +40,7 @@ const clear = ()=>{
         <div  key={id} className="visited">
           <Heart {...favorite} />
           <Link to={`/productpersonal/${cate}/${id}`}>
-          <img src={image}/>
+          <img src={image} alt={name}/>
           </Link>
         </div>)
         })}
